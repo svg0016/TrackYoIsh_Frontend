@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrackYoIsh</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+    <h1>TrackYoIsh</h1>
+</head>
+
+<body>
+
+    <hr>
+    <form action="">
+        <div class="container">
+            <h2>SignUp For Ish Tracking</h2>
+            <div class="row">
+                <div class="col-auto">
+                    <input type="text" class="form-control" placeholder="First name" aria-label="First name">
+                </div>
+                <div class="col-auto">
+                    <input type="text" class="form-control" placeholder="Last name" aria-label="Last name">
+                </div>
+
+
+                <div class="col-auto">
+                    <input type="email" class="form-control" placeholder="example@email.com" aria-label="email">
+                </div>
+                <div class="col-auto">
+                    <input type="password" class="form-control" placeholder="password" aria-label="password">
+                </div>
+
+                <div class="col-auto">
+                    <button class="btn btn-primary" type="button">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </form>
+    <hr>
+
+    <form action="">
+        <div class="container">
+            <h3>Login</h3>
+            <div class="row">
+                <div class="col-auto">
+                    <input type="email" class="form-control" placeholder="email" aria-label="email">
+                </div>
+                <div class="col-auto">
+                    <input type="password" class="form-control" placeholder="password" aria-label="password">
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-primary" type="button">Login</button>
+                </div>
+
+            </div>
+        </div>
+    </form>
+
+
+    <hr>
+    <form>
+        <div class="container">
+            <div class="row">
+                <div class="col-auto">
+                    <select class="form-select" aria-label="Default select example">
+            <option selected>Select Carrier</option>
+            <option id="UPS">UPS</option>
+            <option id="FedEx">FedEx</option>
+            <option id="USPS">USPS</option>
+          </select>
+                </div>
+                <div class="col-auto">
+                    <label class="form-label" for="trackingNumber">Enter Your Tracking Number</label>
+                    <input type="text" name="trackingNumber" id="trackingNumber">
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-primary" type="button">Track Ish</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
