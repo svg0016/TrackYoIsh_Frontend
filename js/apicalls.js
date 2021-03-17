@@ -65,6 +65,14 @@ const deleteTrackingData = async (userId, trackingNumber, carrier, token) => {
   );
   return promise.data;
 };
+module.exports = {
+  login,
+  signup,
+  getTrackingData,
+  getSavedTrackingData,
+  saveTrackingData,
+  deleteTrackingData,
+};
 
 // const showData = async () => {
 //   console.log(
