@@ -8,7 +8,7 @@
     <title>TrackYoIsh</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
     <link rel="stylesheet" href="style.css">
-    <h1>TrackYoIsh</h1>
+    <img src="https://dewey.tailorbrands.com/production/brand_version_mockup_image/475/4880240475_cbbc5cc6-2c0a-4f72-ada0-3b4e6488c24a.png?cb=1615994132" alt="TrackYoIsh Logo">
 </head>
 
 <body>
@@ -81,65 +81,71 @@
                 </div>
             </div>
         </div>
+        <hr>
         <style type="text/css">
-      /* Set the size of the div element that contains the map */
-      #map {
-        height: 200px;
-        /* The height is 400 pixels */
-        width: 50%;
-        /* The width is the width of the web page */
-      }
-    </style>
-    <script>
-      // Initialize and add the map
-      function initMap() {
-        // The location of Uluru
-        const uluru = { lat: -25.344, lng: 131.036 };
-        // The map, centered at Uluru
-        const map = new google.maps.Map(document.getElementById("map"), {
-          zoom: 4,
-          center: uluru,
-        });
-        // The marker, positioned at Uluru
-        const marker = new google.maps.Marker({
-          position: uluru,
-          map: map,
-        });
-      }
-    </script>
-  </head>
-  <body>
-    <h3>My Google Maps Demo</h3>
-    <!--The div element for the map -->
-    <div id="map"></div>
+            /* Set the size of the div element that contains the map */
+            
+            #map {
+                height: 200px;
+                /* The height is 400 pixels */
+                width: 50%;
+                /* The width is the width of the web page */
+            }
+        </style>
+        <script>
+            // Initialize and add the map
+            function initMap() {
+                // The location of Uluru
+                const uluru = {
+                    lat: -25.344,
+                    lng: 131.036
+                };
+                // The map, centered at Uluru
+                const map = new google.maps.Map(document.getElementById("map"), {
+                    zoom: 4,
+                    center: uluru,
+                });
+                // The marker, positioned at Uluru
+                const marker = new google.maps.Marker({
+                    position: uluru,
+                    map: map,
+                });
+            }
+        </script>
+        </head>
 
-    <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
-    <!-- <script
+        <body>
+            <h3>My Google Maps Demo</h3>
+            <!--The div element for the map -->
+            <div id="map"></div>
+
+            <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+            <!-- <script
      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCQbqhzxYkuL4h9T7xhg6pALDuREcVEMds&callback=initMap&libraries=&v=weekly"
       async
     ></script> -->
-  </body>
-  <body>
-    <p>
-      Enter some text in the fields below, then press the "Reset form" button to
-      reset the form.
-    </p>
-    <form id="myForm">
-      Tracking Number: <input type="text" tracking="Tracking Number" /><br />
-      <input type="button" onclick="myClearFunction()" value="Clear" />
-      <input type="button" onclick="mySaveFunction()" value="Save" />
-      <input type="button" onclick="myFunction()" value="Remove" />
-    </form>
+        </body>
 
-    <script>
-      function myClearFunction() {
-        document.getElementById("myForm").reset();
-      }
-      function mySaveFunction() {
-        document.getElementById("myForm").save();
-      }
-    </script>
-  </body>
+        <body>
+            <p>
+                Enter some text in the fields below, then press the "Reset form" button to reset the form.
+            </p>
+            <form id="myForm">
+                <input class="btn btn-primary" type="button" onclick="myClearFunction()" value="Clear" />
+                <input class="btn btn-primary" type="button" onclick="mySaveFunction()" value="Save" />
+                <input class="btn btn-primary" type="button" onclick="myFunction()" value="Remove" />
+            </form>
+
+            <script>
+                function myClearFunction() {
+                    document.getElementById("myForm").reset();
+                }
+
+                function mySaveFunction() {
+                    document.getElementById("myForm").save();
+                }
+            </script>
+        </body>
     </form>
 
     <script src="script.js"></script>
