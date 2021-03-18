@@ -1,10 +1,16 @@
 const axios = require("axios").default;
 
 const login = async (email, password) => {
-  const promise = await axios.post("https://trackyoish.herokuapp.com/login", {
-    email,
-    password,
-  });
+  const promise = await axios.post(
+    "http://localhost:5000/login",
+    {
+      email,
+      password,
+    },
+    {
+      withCredentials: true,
+    }
+  );
   if (promise.data.ok) {
     localStorage.setItem("userId", promise.data.userId);
   }
@@ -12,12 +18,18 @@ const login = async (email, password) => {
 };
 
 const signup = async (firstname, lastname, email, password) => {
-  const promise = await axios.post("https://trackyoish.herokuapp.com/signup", {
-    firstname,
-    lastname,
-    email,
-    password,
-  });
+  const promise = await axios.post(
+    "http://localhost:5000/signup",
+    {
+      firstname,
+      lastname,
+      email,
+      password,
+    },
+    {
+      withCredentials: true,
+    }
+  );
   return promise.data;
 };
 

@@ -3,6 +3,7 @@ const { default: axios } = require("axios");
 let accessToken = "";
 let loggedIn = false;
 let userId = "";
+let loading = true;
 
 const setAccessToken = (token) => {
   accessToken = token;
@@ -12,8 +13,16 @@ const setLoggedIn = (status) => {
   loggedIn = status;
 };
 
+const getLoading = () => {
+  return loading;
+};
+
 const setUserId = (id) => {
   userId = id;
+};
+
+const setLoading = (status) => {
+  loading = status;
 };
 
 const getUserId = () => {
@@ -29,21 +38,35 @@ const getAccessToken = () => {
 };
 
 const refreshAccessToken = async () => {
-  const userId = localStorage.getItem("userId");
+  const userStoredId = localStorage.getItem("userId");
   const promise = await axios.post(
-    "https://trackyoish.herokuapp.com/refresh-token",
-    { userId },
+    "http://localhost:5000/refresh-token",
+    { userId: userStoredId },
     {
       withCredentials: true,
     }
   );
   const data = promise.data;
-  console.log(data);
   if (data.ok) {
-    const { accessToken: token } = data;
-    accessToken = token;
+    const { accessToken: token, userId: id } = data;
+    setAccessToken(token);
+    setLoggedIn(true);
+    setLoading(false);
+    console.log(getLoggedIn());
+    userId = id;
+  } else {
+    setLoggedIn(false);
+    setLoading(false);
+    userId = "";
+    setAccessToken("");
   }
 };
+
+const preLoadCheck = async () => {
+  await refreshAccessToken();
+};
+
+window.preLoadCheck = preLoadCheck;
 
 module.exports = {
   setLoggedIn,
@@ -53,4 +76,5 @@ module.exports = {
   refreshAccessToken,
   setUserId,
   getUserId,
+  getLoading,
 };

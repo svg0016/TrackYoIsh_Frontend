@@ -4,6 +4,7 @@ const { default: axios } = require("axios");
 let accessToken = "";
 let loggedIn = false;
 let userId = "";
+let loading = true;
 
 const setAccessToken = (token) => {
   accessToken = token;
@@ -13,8 +14,16 @@ const setLoggedIn = (status) => {
   loggedIn = status;
 };
 
+const getLoading = () => {
+  return loading;
+};
+
 const setUserId = (id) => {
   userId = id;
+};
+
+const setLoading = (status) => {
+  loading = status;
 };
 
 const getUserId = () => {
@@ -30,21 +39,40 @@ const getAccessToken = () => {
 };
 
 const refreshAccessToken = async () => {
-  const userId = localStorage.getItem("userId");
+  const userStoredId = localStorage.getItem("userId");
   const promise = await axios.post(
-    "https://trackyoish.herokuapp.com/refresh-token",
-    { userId },
+    "http://localhost:5000/refresh-token",
+    { userId: userStoredId },
     {
       withCredentials: true,
     }
   );
   const data = promise.data;
-  console.log(data);
   if (data.ok) {
-    const { accessToken: token } = data;
-    accessToken = token;
+    const { accessToken: token, userId: id } = data;
+    setAccessToken(token);
+    setLoggedIn(true);
+    setLoading(false);
+    console.log(getLoggedIn());
+    userId = id;
+  } else {
+    setLoggedIn(false);
+    setLoading(false);
+    userId = "";
+    setAccessToken("");
   }
 };
+
+const preLoadCheck = async () => {
+  await refreshAccessToken();
+  let mount = document.querySelector("mount");
+  const promise = await axios.get("./index2.html");
+  let dt = document.createElement("div");
+  const data = promise.data;
+  mount.innerHTML = data;
+};
+
+window.preLoadCheck = preLoadCheck;
 
 module.exports = {
   setLoggedIn,
@@ -54,16 +82,23 @@ module.exports = {
   refreshAccessToken,
   setUserId,
   getUserId,
+  getLoading,
 };
 
 },{"axios":3}],2:[function(require,module,exports){
 const axios = require("axios").default;
 
 const login = async (email, password) => {
-  const promise = await axios.post("https://trackyoish.herokuapp.com/login", {
-    email,
-    password,
-  });
+  const promise = await axios.post(
+    "http://localhost:5000/login",
+    {
+      email,
+      password,
+    },
+    {
+      withCredentials: true,
+    }
+  );
   if (promise.data.ok) {
     localStorage.setItem("userId", promise.data.userId);
   }
@@ -71,12 +106,18 @@ const login = async (email, password) => {
 };
 
 const signup = async (firstname, lastname, email, password) => {
-  const promise = await axios.post("https://trackyoish.herokuapp.com/signup", {
-    firstname,
-    lastname,
-    email,
-    password,
-  });
+  const promise = await axios.post(
+    "http://localhost:5000/signup",
+    {
+      firstname,
+      lastname,
+      email,
+      password,
+    },
+    {
+      withCredentials: true,
+    }
+  );
   return promise.data;
 };
 
@@ -1760,159 +1801,184 @@ const {
   getLoggedIn,
   getUserId,
   setUserId,
+  getLoading,
 } = require("./js/accessToken");
 
 let cleared = true;
-showButtons();
 
-// refreshAccessToken();
-
-function initMap(lng, lat) {
-  // The location of Uluru
-  const uluru = { lat, lng };
-
-  // The map, centered at Uluru
-  const map = new google.maps.Map(document.getElementById("map"), {
-    zoom: 4,
-    center: uluru,
-  });
-  // The marker, positioned at Uluru
-  const marker = new google.maps.Marker({
-    position: uluru,
-    map: map,
-  });
+async function load() {
+  await refreshAccessToken();
 }
 
-document.querySelector("#signupForm").addEventListener("submit", (event) => {
-  handleSignup(event);
-});
+async function application() {
+  await load();
+  showButtons();
 
-async function handleSignup(event) {
-  event.preventDefault();
-  let { firstName, lastName, email, password } = event.target;
-  const data = await api.signup(
-    firstName.value,
-    lastName.value,
-    email.value,
-    password.value
-  );
-  if (!data.ok) {
-    document.querySelector("#emailSignupField").style.backgroundcolor = "red";
-  } else {
-    api.login(email.value, password.value);
-  }
-}
-document.querySelector("#loginForm").addEventListener("submit", (event) => {
-  handleLogin(event);
-});
-
-async function handleLogin(event) {
-  event.preventDefault();
-  let { email, password } = event.target;
-  const data = await api.login(email.value, password.value);
-  console.log(data);
-  if (!data.ok) {
-    console.log(data.message);
-    document.getElementById("ishMessenger").innerHTML = "Invalid";
-  } else {
-    let { accessToken } = data;
-    setAccessToken(accessToken);
-    setLoggedIn(true);
-    setUserId(data.userId);
-    document.getElementById("ishMessenger").innerHTML = "Success!";
-    let allData = await api.getSavedTrackingData(getUserId(), getAccessToken());
-    document.querySelector("#savedTracking").innerHTML = showSideBar(allData);
+  console.log(getLoggedIn());
+  if (getLoggedIn()) {
     document.querySelector("#signupForm").textContent = "";
     document.querySelector("#loginArea").textContent = "";
   }
-}
-document
-  .querySelector("#trackingNumberForm")
-  .addEventListener("submit", (event) => {
-    handleTrackingNumber(event);
-  });
 
-function clearDivs() {
-  document.querySelector("#trackingData").textContent = "";
-  document.querySelector("#trackingNumber").value = "";
-  document.querySelector("#map").textContent = "";
-  cleared = true;
-  showButtons();
-}
+  // refreshAccessToken();
 
-async function handleTrackingNumber(event) {
-  event.preventDefault();
-  let { carrier, trackingNumber } = event.target;
-  const data = await api.getTrackingData(
-    trackingNumber.value,
-    carrier.value,
-    getAccessToken()
-  );
-  if (data.ok) {
-    document.querySelector("#map").innerHTML = showMap(data);
-    document.querySelector("#trackingData").innerHTML = showData(data);
-    cleared = false;
+  function initMap(lng, lat) {
+    // The location of Uluru
+    const uluru = { lat, lng };
+
+    // The map, centered at Uluru
+    const map = new google.maps.Map(document.getElementById("map"), {
+      zoom: 4,
+      center: uluru,
+    });
+    // The marker, positioned at Uluru
+    const marker = new google.maps.Marker({
+      position: uluru,
+      map: map,
+    });
+  }
+
+  if (!getLoggedIn()) {
+    document
+      .querySelector("#signupForm")
+      .addEventListener("submit", (event) => {
+        handleSignup(event);
+      });
+
+    async function handleSignup(event) {
+      event.preventDefault();
+      let { firstName, lastName, email, password } = event.target;
+      const data = await api.signup(
+        firstName.value,
+        lastName.value,
+        email.value,
+        password.value
+      );
+      if (!data.ok) {
+        document.querySelector("#emailSignupField").style.backgroundcolor =
+          "red";
+      } else {
+        api.login(email.value, password.value);
+      }
+    }
+    document.querySelector("#loginForm").addEventListener("submit", (event) => {
+      handleLogin(event);
+    });
+
+    async function handleLogin(event) {
+      event.preventDefault();
+      let { email, password } = event.target;
+      const data = await api.login(email.value, password.value);
+      console.log(data);
+      if (!data.ok) {
+        console.log(data.message);
+        document.getElementById("ishMessenger").innerHTML = "Invalid";
+      } else {
+        let { accessToken } = data;
+        setAccessToken(accessToken);
+        setLoggedIn(true);
+        setUserId(data.userId);
+        document.getElementById("ishMessenger").innerHTML = "Success!";
+        let allData = await api.getSavedTrackingData(
+          getUserId(),
+          getAccessToken()
+        );
+        document.querySelector("#savedTracking").innerHTML = showSideBar(
+          allData
+        );
+        document.querySelector("#signupForm").textContent = "";
+        document.querySelector("#loginArea").textContent = "";
+      }
+    }
+  }
+
+  document
+    .querySelector("#trackingNumberForm")
+    .addEventListener("submit", (event) => {
+      handleTrackingNumber(event);
+    });
+
+  function clearDivs() {
+    document.querySelector("#trackingData").textContent = "";
+    document.querySelector("#trackingNumber").value = "";
+    document.querySelector("#map").textContent = "";
+    cleared = true;
     showButtons();
-  } else {
-    console.log(carrier.value);
-    document.getElementById("ishMessenger").innerHTML = "Invalid";
   }
-}
 
-async function handleDelete(event) {
-  let userId = localStorage.getItem("userId");
-  let trackingNumber = document.querySelector("#tracking_code").textContent;
-  let data = await api.deleteTrackingData(
-    userId,
-    trackingNumber,
-    getAccessToken()
-  );
-
-  if (data.ok) {
-    document.getElementById("ishMessenger").innerHTML = "Record Deleted";
-  } else {
-    document.getElementById("ishMessenger").innerHTML = "Record Not Deleted";
+  async function handleTrackingNumber(event) {
+    event.preventDefault();
+    let { carrier, trackingNumber } = event.target;
+    const data = await api.getTrackingData(
+      trackingNumber.value,
+      carrier.value,
+      getAccessToken()
+    );
+    if (data.ok) {
+      document.querySelector("#map").innerHTML = showMap(data);
+      document.querySelector("#trackingData").innerHTML = showData(data);
+      cleared = false;
+      showButtons();
+    } else {
+      console.log(carrier.value);
+      document.getElementById("ishMessenger").innerHTML = "Invalid";
+    }
   }
-}
 
-async function handleSave(event) {
-  let userId = localStorage.getItem("userId");
-  let trackingNumber = document.querySelector("#tracking_code").textContent;
-  let carrier = document.querySelector("#carrier").textContent;
-  let data = await api.saveTrackingData(
-    userId,
-    trackingNumber,
-    carrier,
-    getAccessToken()
-  );
-  if (data.ok) {
-    document.getElementById("ishMessenger").innerHTML = "Record Saved";
-  } else {
-    document.getElementById("ishMessenger").innerHTML = "Record Not Saved";
+  async function handleDelete(event) {
+    let userId = localStorage.getItem("userId");
+    let trackingNumber = document.querySelector("#tracking_code").textContent;
+    let data = await api.deleteTrackingData(
+      userId,
+      trackingNumber,
+      getAccessToken()
+    );
+
+    if (data.ok) {
+      document.getElementById("ishMessenger").innerHTML = "Record Deleted";
+    } else {
+      document.getElementById("ishMessenger").innerHTML = "Record Not Deleted";
+    }
   }
-}
 
-//take in easypost data and put data into map in html
-async function showMap(tracker) {
-  let {
-    country,
-    city,
-    state,
-    zip,
-  } = tracker.data.tracking_details.reverse()[0].tracking_location;
-  const data = await api.getGeoData(city, state);
-  let { lng, lat } = data.results[0].geometry.location;
-  initMap(lng, lat);
-}
+  async function handleSave(event) {
+    let userId = localStorage.getItem("userId");
+    let trackingNumber = document.querySelector("#tracking_code").textContent;
+    let carrier = document.querySelector("#carrier").textContent;
+    let data = await api.saveTrackingData(
+      userId,
+      trackingNumber,
+      carrier,
+      getAccessToken()
+    );
+    if (data.ok) {
+      document.getElementById("ishMessenger").innerHTML = "Record Saved";
+    } else {
+      document.getElementById("ishMessenger").innerHTML = "Record Not Saved";
+    }
+  }
 
-function showData(data) {
-  let { tracking_details, tracking_code, carrier } = data.data;
-  let dataToShow = `
+  //take in easypost data and put data into map in html
+  async function showMap(tracker) {
+    let {
+      country,
+      city,
+      state,
+      zip,
+    } = tracker.data.tracking_details.reverse()[0].tracking_location;
+    const data = await api.getGeoData(city, state);
+    let { lng, lat } = data.results[0].geometry.location;
+    initMap(lng, lat);
+  }
+
+  function showData(data) {
+    let { tracking_details, tracking_code, carrier } = data.data;
+    let dataToShow = `
         <p id="tracking_code">${tracking_code}</p>
         <p2 id="carrier">${carrier}</p2>
     `;
-  tracking_details.forEach((obj) => {
-    dataToShow += `<div class="container">
+    tracking_details.forEach((obj) => {
+      dataToShow += `<div class="container">
                         <div class="row">
                           <div class="col-auto">  
                             <p3>Message: ${obj.message}</p3>
@@ -1932,8 +1998,8 @@ function showData(data) {
                                 ? obj.tracking_location.country
                                 : ""
                             }${
-      obj.tracking_location.zip ? obj.tracking_location.zip : ""
-    }
+        obj.tracking_location.zip ? obj.tracking_location.zip : ""
+      }
                             <p5>
                             <p6>${obj.datetime}<p6>
                             
@@ -1941,62 +2007,46 @@ function showData(data) {
                           </div>
                         </div>  
                       </div> `;
-  });
-
-  // {
-  //             "object": "TrackingDetail",
-  //             "message": "Departed from Facility",
-  //             "description": "Departed from Facility",
-  //             "status": "in_transit",
-  //             "status_detail": "departed_facility",
-  //             "datetime": "2021-03-16T08:09:00Z",
-  //             "source": "UPS",
-  //             "carrier_code": "I",
-  //             "tracking_location": {
-  //                 "object": "TrackingLocation",
-  //                 "city": "Hodgkins",
-  //                 "state": "IL",
-  //                 "country": "US",
-  //                 "zip": null
-  //             }
-  //         }
-
-  return dataToShow;
-}
-
-function showSideBar(data) {
-  let sideBarData = ``;
-  if (data.ok) {
-    data.trackingNumbers.forEach((element) => {
-      sideBarData += `<p1>Tracking Number: ${element.number}</p1>`;
     });
+    return dataToShow;
   }
-  return sideBarData;
-}
 
-function showButtons() {
-  if (cleared) {
-    document.querySelector("#consoleButtons").textContent = "";
-  } else {
-    document.querySelector("#consoleButtons").innerHTML = consoleButtonsJS();
-    document.querySelector("#clear").addEventListener("click", clearDivs);
-    document.querySelector("#remove").addEventListener("click", (event) => {
-      handleDelete(event);
-      clearDivs();
-    });
-    document.querySelector("#save").addEventListener("click", (event) => {
-      handleSave(event);
-    });
+  function showSideBar(data) {
+    let sideBarData = ``;
+    if (data.ok) {
+      data.trackingNumbers.forEach((element) => {
+        sideBarData += `<p1>Tracking Number: ${element.number}</p1>`;
+      });
+    }
+    return sideBarData;
   }
-}
 
-function consoleButtonsJS() {
-  return `
+  function showButtons() {
+    if (cleared) {
+      document.querySelector("#consoleButtons").textContent = "";
+    } else {
+      document.querySelector("#consoleButtons").innerHTML = consoleButtonsJS();
+      document.querySelector("#clear").addEventListener("click", clearDivs);
+      document.querySelector("#remove").addEventListener("click", (event) => {
+        handleDelete(event);
+        clearDivs();
+      });
+      document.querySelector("#save").addEventListener("click", (event) => {
+        handleSave(event);
+      });
+    }
+  }
+
+  function consoleButtonsJS() {
+    return `
       <button class="btn btn-primary" type="button" id="clear">Clear</button>
       <button class="btn btn-primary" type="button" id="save"">Save</button>
       <button class="btn btn-danger" type="button" id="remove">Remove</button>
     `;
+  }
 }
+
+application();
 
 },{"./js/accessToken":1,"./js/apicalls":2}],31:[function(require,module,exports){
 // shim for using process in browser
