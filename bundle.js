@@ -1,4 +1,62 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+const { default: axios } = require("axios");
+
+let accessToken = "";
+let loggedIn = false;
+let userId = "";
+
+const setAccessToken = (token) => {
+  accessToken = token;
+};
+
+const setLoggedIn = (status) => {
+  loggedIn = status;
+};
+
+const setUserId = (id) => {
+  userId = id;
+};
+
+const getUserId = () => {
+  return userId;
+};
+
+const getLoggedIn = (status) => {
+  return loggedIn;
+};
+
+const getAccessToken = () => {
+  return accessToken;
+};
+
+const refreshAccessToken = async () => {
+  const userId = localStorage.getItem("userId");
+  const promise = await axios.post(
+    "https://trackyoish.herokuapp.com/refresh-token",
+    { userId },
+    {
+      withCredentials: true,
+    }
+  );
+  const data = promise.data;
+  console.log(data);
+  if (data.ok) {
+    const { accessToken: token } = data;
+    accessToken = token;
+  }
+};
+
+module.exports = {
+  setLoggedIn,
+  getLoggedIn,
+  setAccessToken,
+  getAccessToken,
+  refreshAccessToken,
+  setUserId,
+  getUserId,
+};
+
+},{"axios":3}],2:[function(require,module,exports){
 const axios = require("axios").default;
 
 const login = async (email, password) => {
@@ -7,7 +65,7 @@ const login = async (email, password) => {
     password,
   });
   if (promise.data.ok) {
-    localStorage.setItem("userID", promise.data.userId);
+    localStorage.setItem("userId", promise.data.userId);
   }
   return promise.data;
 };
@@ -31,9 +89,12 @@ const getTrackingData = async (trackingNumber, carrier, token) => {
 };
 
 const getSavedTrackingData = async (userId, token) => {
-  const promise = await axios.get(`http://localhost:5000/getall/${userId}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  const promise = await axios.get(
+    `https://trackyoish.herokuapp.com/getall/${userId}`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
   return promise.data;
 };
 
@@ -52,7 +113,7 @@ const saveTrackingData = async (userId, trackingNumber, carrier, token) => {
   return promise.data;
 };
 
-const deleteTrackingData = async (userId, trackingNumber, carrier, token) => {
+const deleteTrackingData = async (userId, trackingNumber, token) => {
   const promise = await axios.delete(
     "https://trackyoish.herokuapp.com/trackingNumber",
     {
@@ -60,12 +121,20 @@ const deleteTrackingData = async (userId, trackingNumber, carrier, token) => {
       data: {
         userId,
         trackingNumber,
-        carrier,
       },
     }
   );
   return promise.data;
 };
+
+const getGeoData = async (city, state) => {
+  const promise = await axios.get(
+    `https://maps.googleapis.com/maps/api/geocode/json?address=${city},+${state}&key=AIzaSyCQbqhzxYkuL4h9T7xhg6pALDuREcVEMds`
+  );
+
+  return promise.data;
+};
+
 module.exports = {
   login,
   signup,
@@ -73,6 +142,7 @@ module.exports = {
   getSavedTrackingData,
   saveTrackingData,
   deleteTrackingData,
+  getGeoData,
 };
 
 // const showData = async () => {
@@ -88,9 +158,9 @@ module.exports = {
 
 // showData();
 
-},{"axios":2}],2:[function(require,module,exports){
+},{"axios":3}],3:[function(require,module,exports){
 module.exports = require('./lib/axios');
-},{"./lib/axios":4}],3:[function(require,module,exports){
+},{"./lib/axios":5}],4:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -271,7 +341,7 @@ module.exports = function xhrAdapter(config) {
   });
 };
 
-},{"../core/buildFullPath":10,"../core/createError":11,"./../core/settle":15,"./../helpers/buildURL":19,"./../helpers/cookies":21,"./../helpers/isURLSameOrigin":24,"./../helpers/parseHeaders":26,"./../utils":28}],4:[function(require,module,exports){
+},{"../core/buildFullPath":11,"../core/createError":12,"./../core/settle":16,"./../helpers/buildURL":20,"./../helpers/cookies":22,"./../helpers/isURLSameOrigin":25,"./../helpers/parseHeaders":27,"./../utils":29}],5:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -329,7 +399,7 @@ module.exports = axios;
 // Allow use of default import syntax in TypeScript
 module.exports.default = axios;
 
-},{"./cancel/Cancel":5,"./cancel/CancelToken":6,"./cancel/isCancel":7,"./core/Axios":8,"./core/mergeConfig":14,"./defaults":17,"./helpers/bind":18,"./helpers/isAxiosError":23,"./helpers/spread":27,"./utils":28}],5:[function(require,module,exports){
+},{"./cancel/Cancel":6,"./cancel/CancelToken":7,"./cancel/isCancel":8,"./core/Axios":9,"./core/mergeConfig":15,"./defaults":18,"./helpers/bind":19,"./helpers/isAxiosError":24,"./helpers/spread":28,"./utils":29}],6:[function(require,module,exports){
 'use strict';
 
 /**
@@ -350,7 +420,7 @@ Cancel.prototype.__CANCEL__ = true;
 
 module.exports = Cancel;
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 'use strict';
 
 var Cancel = require('./Cancel');
@@ -409,14 +479,14 @@ CancelToken.source = function source() {
 
 module.exports = CancelToken;
 
-},{"./Cancel":5}],7:[function(require,module,exports){
+},{"./Cancel":6}],8:[function(require,module,exports){
 'use strict';
 
 module.exports = function isCancel(value) {
   return !!(value && value.__CANCEL__);
 };
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -513,7 +583,7 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 
 module.exports = Axios;
 
-},{"../helpers/buildURL":19,"./../utils":28,"./InterceptorManager":9,"./dispatchRequest":12,"./mergeConfig":14}],9:[function(require,module,exports){
+},{"../helpers/buildURL":20,"./../utils":29,"./InterceptorManager":10,"./dispatchRequest":13,"./mergeConfig":15}],10:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -567,7 +637,7 @@ InterceptorManager.prototype.forEach = function forEach(fn) {
 
 module.exports = InterceptorManager;
 
-},{"./../utils":28}],10:[function(require,module,exports){
+},{"./../utils":29}],11:[function(require,module,exports){
 'use strict';
 
 var isAbsoluteURL = require('../helpers/isAbsoluteURL');
@@ -589,7 +659,7 @@ module.exports = function buildFullPath(baseURL, requestedURL) {
   return requestedURL;
 };
 
-},{"../helpers/combineURLs":20,"../helpers/isAbsoluteURL":22}],11:[function(require,module,exports){
+},{"../helpers/combineURLs":21,"../helpers/isAbsoluteURL":23}],12:[function(require,module,exports){
 'use strict';
 
 var enhanceError = require('./enhanceError');
@@ -609,7 +679,7 @@ module.exports = function createError(message, config, code, request, response) 
   return enhanceError(error, config, code, request, response);
 };
 
-},{"./enhanceError":13}],12:[function(require,module,exports){
+},{"./enhanceError":14}],13:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -690,7 +760,7 @@ module.exports = function dispatchRequest(config) {
   });
 };
 
-},{"../cancel/isCancel":7,"../defaults":17,"./../utils":28,"./transformData":16}],13:[function(require,module,exports){
+},{"../cancel/isCancel":8,"../defaults":18,"./../utils":29,"./transformData":17}],14:[function(require,module,exports){
 'use strict';
 
 /**
@@ -734,7 +804,7 @@ module.exports = function enhanceError(error, config, code, request, response) {
   return error;
 };
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -823,7 +893,7 @@ module.exports = function mergeConfig(config1, config2) {
   return config;
 };
 
-},{"../utils":28}],15:[function(require,module,exports){
+},{"../utils":29}],16:[function(require,module,exports){
 'use strict';
 
 var createError = require('./createError');
@@ -850,7 +920,7 @@ module.exports = function settle(resolve, reject, response) {
   }
 };
 
-},{"./createError":11}],16:[function(require,module,exports){
+},{"./createError":12}],17:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -872,7 +942,7 @@ module.exports = function transformData(data, headers, fns) {
   return data;
 };
 
-},{"./../utils":28}],17:[function(require,module,exports){
+},{"./../utils":29}],18:[function(require,module,exports){
 (function (process){(function (){
 'use strict';
 
@@ -974,7 +1044,7 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 module.exports = defaults;
 
 }).call(this)}).call(this,require('_process'))
-},{"./adapters/http":3,"./adapters/xhr":3,"./helpers/normalizeHeaderName":25,"./utils":28,"_process":30}],18:[function(require,module,exports){
+},{"./adapters/http":4,"./adapters/xhr":4,"./helpers/normalizeHeaderName":26,"./utils":29,"_process":31}],19:[function(require,module,exports){
 'use strict';
 
 module.exports = function bind(fn, thisArg) {
@@ -987,7 +1057,7 @@ module.exports = function bind(fn, thisArg) {
   };
 };
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1059,7 +1129,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
   return url;
 };
 
-},{"./../utils":28}],20:[function(require,module,exports){
+},{"./../utils":29}],21:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1075,7 +1145,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
     : baseURL;
 };
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1130,7 +1200,7 @@ module.exports = (
     })()
 );
 
-},{"./../utils":28}],22:[function(require,module,exports){
+},{"./../utils":29}],23:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1146,7 +1216,7 @@ module.exports = function isAbsoluteURL(url) {
   return /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(url);
 };
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1159,7 +1229,7 @@ module.exports = function isAxiosError(payload) {
   return (typeof payload === 'object') && (payload.isAxiosError === true);
 };
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1229,7 +1299,7 @@ module.exports = (
     })()
 );
 
-},{"./../utils":28}],25:[function(require,module,exports){
+},{"./../utils":29}],26:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -1243,7 +1313,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
   });
 };
 
-},{"../utils":28}],26:[function(require,module,exports){
+},{"../utils":29}],27:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1298,7 +1368,7 @@ module.exports = function parseHeaders(headers) {
   return parsed;
 };
 
-},{"./../utils":28}],27:[function(require,module,exports){
+},{"./../utils":29}],28:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1327,7 +1397,7 @@ module.exports = function spread(callback) {
   };
 };
 
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 'use strict';
 
 var bind = require('./helpers/bind');
@@ -1680,8 +1750,19 @@ module.exports = {
   stripBOM: stripBOM
 };
 
-},{"./helpers/bind":18}],29:[function(require,module,exports){
+},{"./helpers/bind":19}],30:[function(require,module,exports){
 const api = require("./js/apicalls");
+const {
+  setAccessToken,
+  getAccessToken,
+  refreshAccessToken,
+  setLoggedIn,
+  getLoggedIn,
+  getUserId,
+  setUserId,
+} = require("./js/accessToken");
+
+refreshAccessToken();
 
 function initMap() {
   // The location of Uluru
@@ -1736,12 +1817,168 @@ async function handleLogin(event) {
   event.preventDefault();
   let { email, password } = event.target;
   const data = await api.login(email.value, password.value);
+  console.log(data);
   if (!data.ok) {
-    document.getElementById("signupMessage").innerHTML = "Invalid ";
+    console.log(data.message);
+    document.getElementById("signupMessage").innerHTML = "Invalid";
+  } else {
+    let { accessToken } = data;
+    setAccessToken(accessToken);
+    setLoggedIn(true);
+    setUserId(data.userId);
+    document.getElementById("signupMessage").innerHTML = "Success!";
+    let allData = await api.getSavedTrackingData(getUserId(), getAccessToken());
+    document.querySelector("#savedTracking").innerHTML = showSideBar(allData);
+  }
+}
+document.querySelector("#clear").addEventListener("click", () => {
+  document.querySelector("#trackingInformation").innerHTML = "";
+  document.querySelector("#trackingNumber").value = "";
+});
+document.querySelector("#remove").addEventListener("click", (event) => {
+  handleDelete(event);
+});
+document.querySelector("#save").addEventListener("click", (event) => {
+  handleSave(event);
+});
+document
+  .querySelector("#trackingNumberForm")
+  .addEventListener("submit", (event) => {
+    handleTrackingNumber(event);
+  });
+
+async function handleTrackingNumber(event) {
+  event.preventDefault();
+  let { carrier, trackingNumber } = event.target;
+  const data = await api.getTrackingData(
+    trackingNumber.value,
+    carrier.value,
+    getAccessToken()
+  );
+  if (data.ok) {
+    document.querySelector("#map").innerHTML = showMap(data);
+    document.querySelector("#trackingInformation").innerHTML = showData(data);
+  } else {
+    console.log(carrier.value);
+    document.getElementById("signupMessage").innerHTML = "Invalid";
   }
 }
 
-},{"./js/apicalls":1}],30:[function(require,module,exports){
+async function handleDelete(event) {
+  let userId = localStorage.getItem("userId");
+  let trackingNumber = document.querySelector("#tracking_code").textContent;
+  let data = await api.deleteTrackingData(
+    userId,
+    trackingNumber,
+    getAccessToken()
+  );
+
+  if (data.ok) {
+    document.getElementById("signupMessage").innerHTML = "Record Deleted";
+  } else {
+    document.getElementById("signupMessage").innerHTML = "Record Not Deleted";
+  }
+}
+
+async function handleSave(event) {
+  let userId = localStorage.getItem("userId");
+  let trackingNumber = document.querySelector("#tracking_code").textContent;
+  let carrier = document.querySelector("#carrier").textContent;
+  let data = await api.saveTrackingData(
+    userId,
+    trackingNumber,
+    carrier,
+    getAccessToken()
+  );
+  if (data.ok) {
+    document.getElementById("signupMessage").innerHTML = "Record Saved";
+  } else {
+    document.getElementById("signupMessage").innerHTML = "Record Not Saved";
+  }
+}
+
+//take in easypost data and put data into map in html
+async function showMap(tracker) {
+  let {
+    country,
+    city,
+    state,
+    zip,
+  } = tracker.data.tracking_details.reverse()[0].tracking_location;
+  const data = await api.getGeoData(city, state);
+  let { lng, lat } = data.results[0].geometry.location;
+}
+
+function showData(data) {
+  let { tracking_details, tracking_code, carrier } = data.data;
+  let dataToShow = `
+        <p id="tracking_code">${tracking_code}</p>
+        <p2 id="carrier">${carrier}</p2>
+    `;
+  tracking_details.forEach((obj) => {
+    dataToShow += `<div class="container">
+                        <div class="row">
+                          <div class="col-auto">  
+                            <p3>Message: ${obj.message}</p3>
+                            <p4>Status: ${obj.status}</p4>    
+                            <p5>Location: ${
+                              obj.tracking_location.city
+                                ? obj.tracking_location.city
+                                : "N/A"
+                            }, 
+                            ${
+                              obj.tracking_location.state
+                                ? obj.tracking_location.state
+                                : ""
+                            },
+                            ${
+                              obj.tracking_location.country
+                                ? obj.tracking_location.country
+                                : ""
+                            }${
+      obj.tracking_location.zip ? obj.tracking_location.zip : ""
+    }
+                            <p5>
+                            <p6>${obj.datetime}<p6>
+                            
+                            
+                          </div>
+                        </div>  
+                      </div> `;
+  });
+
+  // {
+  //             "object": "TrackingDetail",
+  //             "message": "Departed from Facility",
+  //             "description": "Departed from Facility",
+  //             "status": "in_transit",
+  //             "status_detail": "departed_facility",
+  //             "datetime": "2021-03-16T08:09:00Z",
+  //             "source": "UPS",
+  //             "carrier_code": "I",
+  //             "tracking_location": {
+  //                 "object": "TrackingLocation",
+  //                 "city": "Hodgkins",
+  //                 "state": "IL",
+  //                 "country": "US",
+  //                 "zip": null
+  //             }
+  //         }
+
+  return dataToShow;
+}
+
+function showSideBar(data) {
+  let sideBarData = ``;
+  if (data.ok) {
+    data.trackingNumbers.forEach((element) => {
+      sideBarData += `<p1>Tracking Number: ${element.number}</p1>`;
+    });
+  }
+  return sideBarData;
+}
+
+},{"./js/accessToken":1,"./js/apicalls":2}],31:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -1927,4 +2164,4 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}]},{},[29]);
+},{}]},{},[30]);

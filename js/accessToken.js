@@ -1,9 +1,27 @@
 const { default: axios } = require("axios");
 
 let accessToken = "";
+let loggedIn = false;
+let userId = "";
 
 const setAccessToken = (token) => {
   accessToken = token;
+};
+
+const setLoggedIn = (status) => {
+  loggedIn = status;
+};
+
+const setUserId = (id) => {
+  userId = id;
+};
+
+const getUserId = () => {
+  return userId;
+};
+
+const getLoggedIn = (status) => {
+  return loggedIn;
 };
 
 const getAccessToken = () => {
@@ -27,4 +45,12 @@ const refreshAccessToken = async () => {
   }
 };
 
-module.exports = { setAccessToken, getAccessToken, refreshAccessToken };
+module.exports = {
+  setLoggedIn,
+  getLoggedIn,
+  setAccessToken,
+  getAccessToken,
+  refreshAccessToken,
+  setUserId,
+  getUserId,
+};

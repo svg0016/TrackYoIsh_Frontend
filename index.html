@@ -71,45 +71,53 @@
     </form>
     <hr />
 
-    <div>
-      <div class="row">
-        <div class="col-auto">
-          <h3>Login</h3>
-        </div>
-        <div class="col-auto">
-          <p id="signupMessage"></p>
-        </div>
+    <div class="row">
+      <div class="col-auto">
+        <h3>Login</h3>
       </div>
-      <form action="" id="loginForm">
-        <div class="container">
-          <div class="row">
-            <div class="col-auto">
-              <input
-                type="email"
-                class="form-control"
-                placeholder="email"
-                aria-label="email"
-                name="email"
-              />
-            </div>
-            <div class="col-auto">
-              <input
-                type="password"
-                class="form-control"
-                placeholder="password"
-                aria-label="password"
-                name="password"
-              />
-            </div>
-            <div class="col-auto">
-              <button class="btn btn-primary" type="submit">Login</button>
-            </div>
+      <div class="col-auto">
+        <p id="signupMessage"></p>
+      </div>
+    </div>
+    <form action="" id="loginForm">
+      <div class="container">
+        <div class="row">
+          <div class="col-auto">
+            <input
+              type="email"
+              class="form-control"
+              placeholder="email"
+              aria-label="email"
+              name="email"
+            />
+          </div>
+          <div class="col-auto">
+            <input
+              type="password"
+              class="form-control"
+              placeholder="password"
+              aria-label="password"
+              name="password"
+            />
+          </div>
+          <div class="col-auto">
+            <button class="btn btn-primary" type="submit">Login</button>
           </div>
         </div>
-      </form>
-    </div>
+      </div>
+    </form>
 
     <hr />
+
+    <div class="row">
+      <div class="col-auto">
+        <h4>Track Ish</h4>
+      </div>
+      <div class="col-auto">
+        <p id="trackingNumberMessage"></p>
+      </div>
+    </div>
+
     <form id="trackingNumberForm">
       <div class="container">
         <div class="row">
@@ -127,50 +135,40 @@
           </div>
           <div class="col-auto">
             <label class="form-label" for="trackingNumber"
-              >Enter Your Tracking Number</label
-            >
-            <input type="text" name="trackingNumber" id="trackingNumber" />
+              >Enter Your Tracking Number
+              <input type="text" name="trackingNumber" id="trackingNumber" />
+            </label>
           </div>
           <div class="col-auto">
             <button class="btn btn-primary" type="submit">Track Ish</button>
           </div>
         </div>
       </div>
-      <hr />
-
-      <div id="trackingInformation">
-        <div id="map"></div>
-
-        <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
-        <!-- <script
-     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCQbqhzxYkuL4h9T7xhg6pALDuREcVEMds&callback=initMap&libraries=&v=weekly"
-      async
-    ></script> -->
-      </div>
-
-      <div>
-        <form id="myForm">
-          <input
-            class="btn btn-primary"
-            type="button"
-            onclick="myClearFunction()"
-            value="Clear"
-          />
-          <input
-            class="btn btn-primary"
-            type="button"
-            onclick="mySaveFunction()"
-            value="Save"
-          />
-          <input
-            class="btn btn-primary"
-            type="button"
-            onclick="myFunction()"
-            value="Remove"
-          />
-        </form>
-      </div>
     </form>
+    <hr />
+
+    <div id="trackingInformation">
+      <div id="trackingData"></div>
+
+      <div id="map"></div>
+
+      <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+      <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCQbqhzxYkuL4h9T7xhg6pALDuREcVEMds&callback=initMap&libraries=&v=weekly"
+        async
+      ></script>
+    </div>
+
+    <div>
+      <button class="btn btn-primary" type="button" id="clear">Clear</button>
+      <button class="btn btn-primary" type="button" id="save">Save</button>
+      <button class="btn btn-danger" type="button" id="remove">Remove</button>
+    </div>
+
+    <hr />
+    <div class="conatiner">
+      <div id="savedTracking"></div>
+    </div>
     <script src="bundle.js"></script>
   </body>
 </html>

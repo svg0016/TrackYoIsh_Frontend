@@ -6,7 +6,7 @@ const login = async (email, password) => {
     password,
   });
   if (promise.data.ok) {
-    localStorage.setItem("userID", promise.data.userId);
+    localStorage.setItem("userId", promise.data.userId);
   }
   return promise.data;
 };
@@ -30,9 +30,12 @@ const getTrackingData = async (trackingNumber, carrier, token) => {
 };
 
 const getSavedTrackingData = async (userId, token) => {
-  const promise = await axios.get(`http://localhost:5000/getall/${userId}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  const promise = await axios.get(
+    `https://trackyoish.herokuapp.com/getall/${userId}`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
   return promise.data;
 };
 
@@ -51,7 +54,7 @@ const saveTrackingData = async (userId, trackingNumber, carrier, token) => {
   return promise.data;
 };
 
-const deleteTrackingData = async (userId, trackingNumber, carrier, token) => {
+const deleteTrackingData = async (userId, trackingNumber, token) => {
   const promise = await axios.delete(
     "https://trackyoish.herokuapp.com/trackingNumber",
     {
@@ -59,12 +62,20 @@ const deleteTrackingData = async (userId, trackingNumber, carrier, token) => {
       data: {
         userId,
         trackingNumber,
-        carrier,
       },
     }
   );
   return promise.data;
 };
+
+const getGeoData = async (city, state) => {
+  const promise = await axios.get(
+    `https://maps.googleapis.com/maps/api/geocode/json?address=${city},+${state}&key=AIzaSyCQbqhzxYkuL4h9T7xhg6pALDuREcVEMds`
+  );
+
+  return promise.data;
+};
+
 module.exports = {
   login,
   signup,
@@ -72,6 +83,7 @@ module.exports = {
   getSavedTrackingData,
   saveTrackingData,
   deleteTrackingData,
+  getGeoData,
 };
 
 // const showData = async () => {
