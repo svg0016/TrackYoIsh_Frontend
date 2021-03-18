@@ -9,14 +9,15 @@ const {
   setUserId,
 } = require("./js/accessToken");
 
-refreshAccessToken();
+let cleared = true;
+showButtons();
 
-function initMap() {
+// refreshAccessToken();
+
+function initMap(lng, lat) {
   // The location of Uluru
-  const uluru = {
-    lat: -25.344,
-    lng: 131.036,
-  };
+  const uluru = { lat, lng };
+
   // The map, centered at Uluru
   const map = new google.maps.Map(document.getElementById("map"), {
     zoom: 4,
@@ -27,14 +28,6 @@ function initMap() {
     position: uluru,
     map: map,
   });
-}
-
-function myClearFunction() {
-  document.getElementById("myForm").reset();
-}
-
-function mySaveFunction() {
-  document.getElementById("myForm").save();
 }
 
 document.querySelector("#signupForm").addEventListener("submit", (event) => {
@@ -67,32 +60,32 @@ async function handleLogin(event) {
   console.log(data);
   if (!data.ok) {
     console.log(data.message);
-    document.getElementById("signupMessage").innerHTML = "Invalid";
+    document.getElementById("ishMessenger").innerHTML = "Invalid";
   } else {
     let { accessToken } = data;
     setAccessToken(accessToken);
     setLoggedIn(true);
     setUserId(data.userId);
-    document.getElementById("signupMessage").innerHTML = "Success!";
+    document.getElementById("ishMessenger").innerHTML = "Success!";
     let allData = await api.getSavedTrackingData(getUserId(), getAccessToken());
     document.querySelector("#savedTracking").innerHTML = showSideBar(allData);
+    document.querySelector("#signupForm").textContent = "";
+    document.querySelector("#loginArea").textContent = "";
   }
 }
-document.querySelector("#clear").addEventListener("click", () => {
-  document.querySelector("#trackingInformation").innerHTML = "";
-  document.querySelector("#trackingNumber").value = "";
-});
-document.querySelector("#remove").addEventListener("click", (event) => {
-  handleDelete(event);
-});
-document.querySelector("#save").addEventListener("click", (event) => {
-  handleSave(event);
-});
 document
   .querySelector("#trackingNumberForm")
   .addEventListener("submit", (event) => {
     handleTrackingNumber(event);
   });
+
+function clearDivs() {
+  document.querySelector("#trackingData").textContent = "";
+  document.querySelector("#trackingNumber").value = "";
+  document.querySelector("#map").textContent = "";
+  cleared = true;
+  showButtons();
+}
 
 async function handleTrackingNumber(event) {
   event.preventDefault();
@@ -104,10 +97,12 @@ async function handleTrackingNumber(event) {
   );
   if (data.ok) {
     document.querySelector("#map").innerHTML = showMap(data);
-    document.querySelector("#trackingInformation").innerHTML = showData(data);
+    document.querySelector("#trackingData").innerHTML = showData(data);
+    cleared = false;
+    showButtons();
   } else {
     console.log(carrier.value);
-    document.getElementById("signupMessage").innerHTML = "Invalid";
+    document.getElementById("ishMessenger").innerHTML = "Invalid";
   }
 }
 
@@ -121,9 +116,9 @@ async function handleDelete(event) {
   );
 
   if (data.ok) {
-    document.getElementById("signupMessage").innerHTML = "Record Deleted";
+    document.getElementById("ishMessenger").innerHTML = "Record Deleted";
   } else {
-    document.getElementById("signupMessage").innerHTML = "Record Not Deleted";
+    document.getElementById("ishMessenger").innerHTML = "Record Not Deleted";
   }
 }
 
@@ -138,9 +133,9 @@ async function handleSave(event) {
     getAccessToken()
   );
   if (data.ok) {
-    document.getElementById("signupMessage").innerHTML = "Record Saved";
+    document.getElementById("ishMessenger").innerHTML = "Record Saved";
   } else {
-    document.getElementById("signupMessage").innerHTML = "Record Not Saved";
+    document.getElementById("ishMessenger").innerHTML = "Record Not Saved";
   }
 }
 
@@ -154,6 +149,7 @@ async function showMap(tracker) {
   } = tracker.data.tracking_details.reverse()[0].tracking_location;
   const data = await api.getGeoData(city, state);
   let { lng, lat } = data.results[0].geometry.location;
+  initMap(lng, lat);
 }
 
 function showData(data) {
@@ -223,4 +219,28 @@ function showSideBar(data) {
     });
   }
   return sideBarData;
+}
+
+function showButtons() {
+  if (cleared) {
+    document.querySelector("#consoleButtons").textContent = "";
+  } else {
+    document.querySelector("#consoleButtons").innerHTML = consoleButtonsJS();
+    document.querySelector("#clear").addEventListener("click", clearDivs);
+    document.querySelector("#remove").addEventListener("click", (event) => {
+      handleDelete(event);
+      clearDivs();
+    });
+    document.querySelector("#save").addEventListener("click", (event) => {
+      handleSave(event);
+    });
+  }
+}
+
+function consoleButtonsJS() {
+  return `
+      <button class="btn btn-primary" type="button" id="clear">Clear</button>
+      <button class="btn btn-primary" type="button" id="save"">Save</button>
+      <button class="btn btn-danger" type="button" id="remove">Remove</button>
+    `;
 }

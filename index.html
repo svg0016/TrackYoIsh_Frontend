@@ -11,7 +11,7 @@
       integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="./style.css" />
     <img
       src="https://dewey.tailorbrands.com/production/brand_version_mockup_image/475/4880240475_cbbc5cc6-2c0a-4f72-ada0-3b4e6488c24a.png?cb=1615994132"
       alt="TrackYoIsh Logo"
@@ -19,6 +19,8 @@
   </head>
 
   <body>
+    <div id="ishMessenger"></div>
+
     <hr />
     <form id="signupForm">
       <div class="container">
@@ -70,43 +72,43 @@
       </div>
     </form>
     <hr />
-
-    <div class="row">
-      <div class="col-auto">
-        <h3>Login</h3>
-      </div>
-      <div class="col-auto">
-        <p id="signupMessage"></p>
-      </div>
-    </div>
-    <form action="" id="loginForm">
-      <div class="container">
-        <div class="row">
-          <div class="col-auto">
-            <input
-              type="email"
-              class="form-control"
-              placeholder="email"
-              aria-label="email"
-              name="email"
-            />
-          </div>
-          <div class="col-auto">
-            <input
-              type="password"
-              class="form-control"
-              placeholder="password"
-              aria-label="password"
-              name="password"
-            />
-          </div>
-          <div class="col-auto">
-            <button class="btn btn-primary" type="submit">Login</button>
-          </div>
+    <div id="loginArea">
+      <div class="row">
+        <div class="col-auto">
+          <h3>Login</h3>
+        </div>
+        <div class="col-auto">
+          <p id="signupMessage"></p>
         </div>
       </div>
-    </form>
-
+      <form action="" id="loginForm">
+        <div class="container">
+          <div class="row">
+            <div class="col-auto">
+              <input
+                type="email"
+                class="form-control"
+                placeholder="email"
+                aria-label="email"
+                name="email"
+              />
+            </div>
+            <div class="col-auto">
+              <input
+                type="password"
+                class="form-control"
+                placeholder="password"
+                aria-label="password"
+                name="password"
+              />
+            </div>
+            <div class="col-auto">
+              <button class="btn btn-primary" type="submit">Login</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
     <hr />
 
     <div class="row">
@@ -151,24 +153,18 @@
       <div id="trackingData"></div>
 
       <div id="map"></div>
-
-      <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
-      <script
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCQbqhzxYkuL4h9T7xhg6pALDuREcVEMds&callback=initMap&libraries=&v=weekly"
-        async
-      ></script>
     </div>
 
-    <div>
-      <button class="btn btn-primary" type="button" id="clear">Clear</button>
-      <button class="btn btn-primary" type="button" id="save">Save</button>
-      <button class="btn btn-danger" type="button" id="remove">Remove</button>
-    </div>
+    <div id="consoleButtons"></div>
 
     <hr />
     <div class="conatiner">
       <div id="savedTracking"></div>
     </div>
     <script src="bundle.js"></script>
+    <script
+      async
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCQbqhzxYkuL4h9T7xhg6pALDuREcVEMds&callback=initMap&libraries=&v=weekly"
+    ></script>
   </body>
 </html>
