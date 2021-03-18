@@ -179,8 +179,8 @@ async function application() {
     function showData(data) {
         let { tracking_details, tracking_code, carrier } = data.data;
         let dataToShow = `
-        <p id="tracking_code">${tracking_code}</p>
-        <p2 id="carrier">${carrier}</p2>
+        <p id="tracking_code"> Tracking Number: ${tracking_code}</p>
+        <p2 id="carrier"> Carrier: ${carrier}</p2>
     `;
         tracking_details.forEach((obj) => {
             dataToShow += `<div class="container">
