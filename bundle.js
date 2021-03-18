@@ -1902,12 +1902,12 @@ async function application() {
       console.log(trackingNumber);
       return;
     } else {
-      carrier = event.target.carrier;
-      trackingNumber = event.target.trackingNumber;
+      carrier = event.target.carrier.value;
+      trackingNumber = event.target.trackingNumber.value;
     }
     const data = await api.getTrackingData(
-      trackingNumber.value,
-      carrier.value,
+      trackingNumber,
+      carrier,
       getAccessToken()
     );
     if (data.ok) {
