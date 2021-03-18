@@ -112,7 +112,6 @@ async function application() {
   }
 
   async function handleTrackingNumber(event) {
-    console.log("called");
     event.preventDefault();
     let carrier;
     let trackingNumber;
@@ -136,6 +135,7 @@ async function application() {
       document.querySelector("#trackingData").innerHTML = showData(data);
       cleared = false;
       showButtons();
+      populateSideBar();
     } else {
       document.getElementById("ishMessenger").innerHTML = "Invalid";
     }
@@ -152,6 +152,7 @@ async function application() {
 
     if (data.ok) {
       document.getElementById("ishMessenger").innerHTML = "Record Deleted";
+      populateSideBar();
     } else {
       document.getElementById("ishMessenger").innerHTML = "Record Not Deleted";
     }
@@ -169,6 +170,7 @@ async function application() {
     );
     if (data.ok) {
       document.getElementById("ishMessenger").innerHTML = "Record Saved";
+      populateSideBar();
     } else {
       document.getElementById("ishMessenger").innerHTML = "Record Not Saved";
     }
