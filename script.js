@@ -224,10 +224,10 @@ async function application() {
     let sideBarData = ``;
     if (data.ok) {
       data.trackingNumbers.forEach((element) => {
-        sideBarData += ` <div class="row"> <p1 onclick=${handleTrackingNumber(
+        sideBarData += ` <div class="row"> <p1 onclick="${handleTrackingNumber(
           null,
           { carrier: element.carrier, trackingNumber: element.trackingNumber }
-        )}>Tracking Number: ${element.number}</p1> </div>`;
+        )}">Tracking Number: ${element.number}</p1> </div>`;
       });
     }
     return sideBarData;
