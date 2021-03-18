@@ -1871,7 +1871,7 @@ async function application() {
   document
     .querySelector("#trackingNumberForm")
     .addEventListener("submit", (event) => {
-      handleTrackingNumber(event, null);
+      handleTrackingNumber(event);
     });
 
   function clearDivs() {
@@ -1882,14 +1882,15 @@ async function application() {
     showButtons();
   }
 
-  async function handleTrackingNumber(event, sideBar) {
+  async function handleTrackingNumber(event) {
     console.log("called");
     event.preventDefault();
     let carrier;
     let trackingNumber;
-    if (sideBar) {
-      carrier = sideBar.carrier;
-      trackingNumber = sideBar.trackingNumber;
+    if (event.target.getAttribute("data-tracking")) {
+      carrier = event.target.getAttribute("data-tracking").carrier;
+      trackingNumber = event.target.getAttribute("data-tracking")
+        .trackingNumber;
     } else {
       carrier = event.target.carrier;
       trackingNumber = event.target.trackingNumber;
@@ -1905,7 +1906,6 @@ async function application() {
       cleared = false;
       showButtons();
     } else {
-      console.log(carrier.value);
       document.getElementById("ishMessenger").innerHTML = "Invalid";
     }
   }
@@ -2000,11 +2000,7 @@ async function application() {
     let sideBarData = ``;
     if (data.ok) {
       data.trackingNumbers.forEach((element) => {
-        sideBarData += ` <div class="row"> <p1 onclick="() =>
-          handleTrackingNumber(null, {
-            carrier: element.carrier,
-            trackingNumber: element.trackingNumber,
-          })">Tracking Number: ${element.number}</p1> </div>`;
+        sideBarData += ` <div class="row"> <p1 onclick="handleTrackingNumber" data-tracking="{carrier: ${element.carrier}, trackingNumber: ${element.trackingNumber}}">Tracking Number: ${element.number}</p1> </div>`;
       });
     }
     return sideBarData;
