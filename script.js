@@ -199,9 +199,9 @@ async function application() {
       dataToShow += `<div class="container">
                         <div class="row">
                           <div class="col-auto">  
-                            <p3>Message: ${obj.message}</p3>
-                            <p4>Status: ${obj.status}</p4>    
-                            <p5>Location: ${
+                            <p3>${obj.message} </p3>
+                            <p4>${obj.status} </p4>    
+                            <p5>${
                               obj.tracking_location.city
                                 ? obj.tracking_location.city
                                 : "N/A"
@@ -218,10 +218,7 @@ async function application() {
                             }${
         obj.tracking_location.zip ? obj.tracking_location.zip : ""
       }
-                            <p5>
-                            <p6>${obj.datetime}<p6>
-                            
-                            
+                            </p5>
                           </div>
                         </div>  
                       </div> `;
