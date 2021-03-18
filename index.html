@@ -1,170 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TrackYoIsh</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl"
-      crossorigin="anonymous"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous" />
     <link rel="stylesheet" href="./style.css" />
-    <img
-      src="https://dewey.tailorbrands.com/production/brand_version_mockup_image/475/4880240475_cbbc5cc6-2c0a-4f72-ada0-3b4e6488c24a.png?cb=1615994132"
-      alt="TrackYoIsh Logo"
-    />
-  </head>
+    <img src="https://dewey.tailorbrands.com/production/brand_version_mockup_image/475/4880240475_cbbc5cc6-2c0a-4f72-ada0-3b4e6488c24a.png?cb=1615994132" alt="TrackYoIsh Logo" />
+</head>
 
-  <body>
+<body>
+
     <div id="ishMessenger"></div>
-
     <hr />
-    <form id="signupForm">
-      <div class="container">
-        <h2>SignUp For Ish Tracking</h2>
-        <div class="row">
-          <div class="col-auto">
-            <input
-              type="text"
-              class="form-control"
-              placeholder="First name"
-              aria-label="First name"
-              name="firstName"
-            />
-          </div>
-          <div class="col-auto">
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Last name"
-              aria-label="Last name"
-              name="lastName"
-            />
-          </div>
+    <div class="d-flex">
 
-          <div class="col-auto">
-            <input
-              type="email"
-              class="form-control"
-              placeholder="example@email.com"
-              aria-label="email"
-              name="email"
-              id="emailSignupField"
-            />
-          </div>
-          <div class="col-auto">
-            <input
-              type="password"
-              class="form-control"
-              placeholder="password"
-              aria-label="password"
-              name="password"
-            />
-          </div>
+        <div class="p-2 border col-auto">
+            <div id="savedTracking"></div>
+        </div>
 
-          <div class="col-auto">
-            <button class="btn btn-primary" type="submit">Sign Up</button>
-          </div>
-        </div>
-      </div>
-    </form>
-    <hr />
-    <div id="loginArea">
-      <div class="row">
-        <div class="col-auto">
-          <h3>Login</h3>
-        </div>
-        <div class="col-auto">
-          <p id="signupMessage"></p>
-        </div>
-      </div>
-      <form action="" id="loginForm">
-        <div class="container">
-          <div class="row">
-            <div class="col-auto">
-              <input
-                type="email"
-                class="form-control"
-                placeholder="email"
-                aria-label="email"
-                name="email"
-              />
+        <div class="p-2 border col-auto">
+
+            <form id="signupForm">
+                <div>
+                    <h2>SignUp For Ish Tracking</h2>
+                    <div class="row">
+                        <div class="col-auto">
+                            <input type="text" class="form-control" placeholder="First name" aria-label="First name" name="firstName" />
+                        </div>
+                        <div class="col-auto">
+                            <input type="text" class="form-control" placeholder="Last name" aria-label="Last name" name="lastName" />
+                        </div>
+
+                        <div class="col-auto">
+                            <input type="email" class="form-control" placeholder="example@email.com" aria-label="email" name="email" id="emailSignupField" />
+                        </div>
+                        <div class="col-auto">
+                            <input type="password" class="form-control" placeholder="password" aria-label="password" name="password" />
+                        </div>
+
+                        <div class="col-auto">
+                            <button class="btn btn-primary" type="submit">Sign Up</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <hr />
+            <div id="loginArea">
+                <div class="row">
+                    <div class="col-auto">
+                        <h3>Login</h3>
+                    </div>
+                    <div class="col-auto">
+                        <p id="signupMessage"></p>
+                    </div>
+                </div>
+                <form action="" id="loginForm">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-auto">
+                                <input type="email" class="form-control" placeholder="email" aria-label="email" name="email" />
+                            </div>
+                            <div class="col-auto">
+                                <input type="password" class="form-control" placeholder="password" aria-label="password" name="password" />
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-primary" type="submit">Login</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
-            <div class="col-auto">
-              <input
-                type="password"
-                class="form-control"
-                placeholder="password"
-                aria-label="password"
-                name="password"
-              />
-            </div>
-            <div class="col-auto">
-              <button class="btn btn-primary" type="submit">Login</button>
-            </div>
-          </div>
-        </div>
-      </form>
-    </div>
-    <hr />
+            <hr />
 
-    <div class="row">
-      <div class="col-auto">
-        <h4>Track Ish</h4>
-      </div>
-      <div class="col-auto">
-        <p id="trackingNumberMessage"></p>
-      </div>
-    </div>
+            <div class="row">
+                <div class="col-auto">
+                    <h4>Track Ish</h4>
+                </div>
+                <div class="col-auto">
+                    <p id="trackingNumberMessage"></p>
+                </div>
+            </div>
 
-    <form id="trackingNumberForm">
-      <div class="container">
-        <div class="row">
-          <div class="col-auto">
-            <select
-              class="form-select"
-              aria-label="Default select example"
-              name="carrier"
-            >
+            <form id="trackingNumberForm">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-auto">
+                            <select class="form-select" aria-label="Default select example" name="carrier">
               <option selected>Select Carrier</option>
               <option value="UPS">UPS</option>
               <option value="FedEx">FedEx</option>
               <option value="USPS">USPS</option>
             </select>
-          </div>
-          <div class="col-auto">
-            <label class="form-label" for="trackingNumber"
-              >Enter Your Tracking Number
+                        </div>
+                        <div class="col-auto">
+                            <label class="form-label" for="trackingNumber">Enter Your Tracking Number
               <input type="text" name="trackingNumber" id="trackingNumber" />
             </label>
-          </div>
-          <div class="col-auto">
-            <button class="btn btn-primary" type="submit">Track Ish</button>
-          </div>
+                        </div>
+                        <div class="col-auto">
+                            <button class="btn btn-primary" type="submit">Track Ish</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <hr />
+
+            <div id="trackingInformation">
+                <div id="trackingData"></div>
+
+                <div id="map"></div>
+            </div>
+
+            <div id="consoleButtons"></div>
+
         </div>
-      </div>
-    </form>
-    <hr />
 
-    <div id="trackingInformation">
-      <div id="trackingData"></div>
 
-      <div id="map"></div>
-    </div>
-
-    <div id="consoleButtons"></div>
-
-    <hr />
-    <div class="conatiner">
-      <div id="savedTracking"></div>
     </div>
     <script src="bundle.js"></script>
-    <script
-      async
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCQbqhzxYkuL4h9T7xhg6pALDuREcVEMds&callback=initMap&libraries=&v=weekly"
-    ></script>
-  </body>
+    <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCQbqhzxYkuL4h9T7xhg6pALDuREcVEMds&callback=initMap&libraries=&v=weekly"></script>
+</body>
+
 </html>
