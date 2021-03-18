@@ -1871,7 +1871,7 @@ async function application() {
   document
     .querySelector("#trackingNumberForm")
     .addEventListener("submit", (event) => {
-      handleTrackingNumber(event);
+      handleTrackingNumber(event, null);
     });
 
   function clearDivs() {
@@ -1882,9 +1882,17 @@ async function application() {
     showButtons();
   }
 
-  async function handleTrackingNumber(event) {
+  async function handleTrackingNumber(event, sideBar) {
     event.preventDefault();
-    let { carrier, trackingNumber } = event.target;
+    let carrier;
+    let trackingNumber;
+    if (sideBar) {
+      carrier = sideBar.carrier;
+      trackingNumber = sideBar.trackingNumber;
+    } else {
+      carrier = event.target.carrier;
+      trackingNumber = event.target.trackingNumber;
+    }
     const data = await api.getTrackingData(
       trackingNumber.value,
       carrier.value,
@@ -1991,7 +1999,10 @@ async function application() {
     let sideBarData = ``;
     if (data.ok) {
       data.trackingNumbers.forEach((element) => {
-        sideBarData += ` <div class="row"> <p1>Tracking Number: ${element.number}</p1> </div>`;
+        sideBarData += ` <div class="row"> <p1 onclick=${handleTrackingNumber(
+          null,
+          { carrier: element.carrier, trackingNumber: element.trackingNumber }
+        )}>Tracking Number: ${element.number}</p1> </div>`;
       });
     }
     return sideBarData;
