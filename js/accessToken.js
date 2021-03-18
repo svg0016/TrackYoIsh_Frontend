@@ -52,7 +52,6 @@ const refreshAccessToken = async () => {
     setAccessToken(token);
     setLoggedIn(true);
     setLoading(false);
-    console.log(getLoggedIn());
     userId = id;
   } else {
     setLoggedIn(false);
