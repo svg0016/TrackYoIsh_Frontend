@@ -230,8 +230,7 @@ async function application() {
     let sideBarData = ``;
     if (data.ok) {
       data.trackingNumbers.forEach((element) => {
-        sideBarData +=
-          "<div class='row'> <p1 class='trackingCode' data-tracking='{carrier: ${element.carrier}, trackingNumber: ${element.trackingNumber}}'>Tracking Number: ${element.number}</p1> </div>";
+        sideBarData += `<div class='row'> <p1 class='trackingCode' data-tracking='{carrier: ${element.carrier}, trackingNumber: ${element.trackingNumber}}'>Tracking Number: ${element.number}</p1> </div>`;
       });
     }
     return sideBarData;
