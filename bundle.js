@@ -1429,9 +1429,8 @@
 
         var utils = require("./../utils");
 
-        module.exports = utils.isStandardBrowserEnv()
-          ? // Standard browser envs support document.cookie
-            (function standardBrowserEnv() {
+        module.exports = utils.isStandardBrowserEnv() // Standard browser envs support document.cookie
+          ? (function standardBrowserEnv() {
               return {
                 write: function write(
                   name,
@@ -1474,9 +1473,8 @@
                   this.write(name, "", Date.now() - 86400000);
                 },
               };
-            })()
-          : // Non standard browser env (web workers, react-native) lack needed support.
-            (function nonStandardBrowserEnv() {
+            })() // Non standard browser env (web workers, react-native) lack needed support.
+          : (function nonStandardBrowserEnv() {
               return {
                 write: function write() {},
                 read: function read() {
@@ -1529,9 +1527,8 @@
 
         var utils = require("./../utils");
 
-        module.exports = utils.isStandardBrowserEnv()
-          ? // Standard browser envs have full support of the APIs needed to test
-            // whether the request URL is of the same origin as current location.
+        module.exports = utils.isStandardBrowserEnv() // Standard browser envs have full support of the APIs needed to test
+          ? // whether the request URL is of the same origin as current location.
             (function standardBrowserEnv() {
               var msie = /(msie|trident)/i.test(navigator.userAgent);
               var urlParsingNode = document.createElement("a");
@@ -1593,9 +1590,8 @@
                   parsed.host === originURL.host
                 );
               };
-            })()
-          : // Non standard browser envs (web workers, react-native) lack needed support.
-            (function nonStandardBrowserEnv() {
+            })() // Non standard browser envs (web workers, react-native) lack needed support.
+          : (function nonStandardBrowserEnv() {
               return function isURLSameOrigin() {
                 return true;
               };
