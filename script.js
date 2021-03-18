@@ -29,11 +29,10 @@ async function application() {
   async function populateSideBar() {
     let allData = await api.getSavedTrackingData(getUserId(), getAccessToken());
     document.querySelector("#savedTracking").innerHTML = showSideBar(allData);
-    document
-      .querySelector(".trackingCode")
-      .addEventListener("click", (event) => {
-        handleTrackingNumber(event);
-      });
+    let trackingCodes = document.querySelectorAll(".trackingCode");
+    trackingCodes.forEach((element) => {
+      element.addEventListener("click", handleTrackingNumber);
+    });
   }
 
   function initMap(lng, lat) {
