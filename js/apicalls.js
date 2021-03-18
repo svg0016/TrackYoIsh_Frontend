@@ -2,7 +2,7 @@ const axios = require("axios").default;
 
 const login = async (email, password) => {
   const promise = await axios.post(
-    "http://localhost:5000/login",
+    "https://trackyoish.herokuapp.com/login",
     {
       email,
       password,
@@ -19,7 +19,7 @@ const login = async (email, password) => {
 
 const signup = async (firstname, lastname, email, password) => {
   const promise = await axios.post(
-    "http://localhost:5000/signup",
+    "https://trackyoish.herokuapp.com/signup",
     {
       firstname,
       lastname,
@@ -97,16 +97,3 @@ module.exports = {
   deleteTrackingData,
   getGeoData,
 };
-
-// const showData = async () => {
-//   console.log(
-//     await deleteTrackingData(
-//       "92055901755477000326971082",
-//       "dreber",
-//       "USPS",
-//       "ddd"
-//     )
-//   );
-// };
-
-// showData();

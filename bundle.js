@@ -41,7 +41,7 @@ const getAccessToken = () => {
 const refreshAccessToken = async () => {
   const userStoredId = localStorage.getItem("userId");
   const promise = await axios.post(
-    "http://localhost:5000/refresh-token",
+    "https://trackyoish.herokuapp.com/refresh-token",
     { userId: userStoredId },
     {
       withCredentials: true,
@@ -65,11 +65,6 @@ const refreshAccessToken = async () => {
 
 const preLoadCheck = async () => {
   await refreshAccessToken();
-  let mount = document.querySelector("mount");
-  const promise = await axios.get("./index2.html");
-  let dt = document.createElement("div");
-  const data = promise.data;
-  mount.innerHTML = data;
 };
 
 window.preLoadCheck = preLoadCheck;
@@ -90,7 +85,7 @@ const axios = require("axios").default;
 
 const login = async (email, password) => {
   const promise = await axios.post(
-    "http://localhost:5000/login",
+    "https://trackyoish.herokuapp.com/login",
     {
       email,
       password,
@@ -107,7 +102,7 @@ const login = async (email, password) => {
 
 const signup = async (firstname, lastname, email, password) => {
   const promise = await axios.post(
-    "http://localhost:5000/signup",
+    "https://trackyoish.herokuapp.com/signup",
     {
       firstname,
       lastname,
@@ -185,19 +180,6 @@ module.exports = {
   deleteTrackingData,
   getGeoData,
 };
-
-// const showData = async () => {
-//   console.log(
-//     await deleteTrackingData(
-//       "92055901755477000326971082",
-//       "dreber",
-//       "USPS",
-//       "ddd"
-//     )
-//   );
-// };
-
-// showData();
 
 },{"axios":3}],3:[function(require,module,exports){
 module.exports = require('./lib/axios');

@@ -40,7 +40,7 @@ const getAccessToken = () => {
 const refreshAccessToken = async () => {
   const userStoredId = localStorage.getItem("userId");
   const promise = await axios.post(
-    "http://localhost:5000/refresh-token",
+    "https://trackyoish.herokuapp.com/refresh-token",
     { userId: userStoredId },
     {
       withCredentials: true,

@@ -20,7 +20,6 @@ async function application() {
   await load();
   showButtons();
 
-  console.log(getLoggedIn());
   if (getLoggedIn()) {
     document.querySelector("#signupForm").textContent = "";
     document.querySelector("#loginArea").textContent = "";
