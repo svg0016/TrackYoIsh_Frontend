@@ -1883,6 +1883,7 @@ async function application() {
   }
 
   async function handleTrackingNumber(event, sideBar) {
+    console.log("called");
     event.preventDefault();
     let carrier;
     let trackingNumber;
