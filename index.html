@@ -26,44 +26,44 @@
             alt="TrackYoIsh Logo"
           />
         </div>
-        <div class="p-2 border-right justify-content: flex-end">
-          <div id="loginArea">
+      </div>
+      <div class="p-2 border-right justify-content: flex-end">
+        <div id="loginArea">
+          <div class="row">
+            <div class="col-auto">
+              <h3>Login</h3>
+            </div>
+            <div class="col-auto">
+              <p id="signupMessage"></p>
+            </div>
+          </div>
+          <form action="" id="loginForm">
             <div class="row">
               <div class="col-auto">
-                <h3>Login</h3>
+                <input
+                  type="email"
+                  class="form-control"
+                  placeholder="email"
+                  aria-label="email"
+                  name="email"
+                  required
+                />
               </div>
               <div class="col-auto">
-                <p id="signupMessage"></p>
+                <input
+                  type="password"
+                  class="form-control"
+                  placeholder="password"
+                  aria-label="password"
+                  name="password"
+                  required
+                />
+              </div>
+              <div class="col-auto">
+                <button class="btn btn-primary" type="submit">Login</button>
               </div>
             </div>
-            <form action="" id="loginForm">
-              <div class="row">
-                <div class="col-auto">
-                  <input
-                    type="email"
-                    class="form-control"
-                    placeholder="email"
-                    aria-label="email"
-                    name="email"
-                    required
-                  />
-                </div>
-                <div class="col-auto">
-                  <input
-                    type="password"
-                    class="form-control"
-                    placeholder="password"
-                    aria-label="password"
-                    name="password"
-                    required
-                  />
-                </div>
-                <div class="col-auto">
-                  <button class="btn btn-primary" type="submit">Login</button>
-                </div>
-              </div>
-            </form>
-          </div>
+          </form>
         </div>
       </div>
     </div>
