@@ -1893,9 +1893,8 @@ async function application() {
     let carrier;
     let trackingNumber;
     if (event.target.getAttribute("data-tracking")) {
-      carrier = event.target.getAttribute("data-tracking").carrier;
-      trackingNumber = event.target.getAttribute("data-tracking")
-        .trackingNumber;
+      console.log(event.target.getAttribute("data-tracking"));
+      return;
     } else {
       carrier = event.target.carrier;
       trackingNumber = event.target.trackingNumber;
