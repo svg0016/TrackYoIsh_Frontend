@@ -1798,6 +1798,10 @@ async function application() {
   if (getLoggedIn()) {
     document.querySelector("#signupForm").textContent = "";
     document.querySelector("#loginArea").textContent = "";
+    populateSideBar();
+  }
+
+  async function populateSideBar() {
     let allData = await api.getSavedTrackingData(getUserId(), getAccessToken());
     document.querySelector("#savedTracking").innerHTML = showSideBar(allData);
   }
@@ -1859,6 +1863,7 @@ async function application() {
         document.getElementById("ishMessenger").innerHTML = "Success!";
         document.querySelector("#signupForm").textContent = "";
         document.querySelector("#loginArea").textContent = "";
+        populateSideBar();
       }
     }
   }
