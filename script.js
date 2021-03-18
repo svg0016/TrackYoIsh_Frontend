@@ -1,5 +1,15 @@
 const api = require("./js/apicalls");
-const { setAccessToken, getAccessToken } = require("./js/accessToken");
+const {
+  setAccessToken,
+  getAccessToken,
+  refreshAccessToken,
+  setLoggedIn,
+  getLoggedIn,
+  getUserId,
+  setUserId,
+} = require("./js/accessToken");
+
+refreshAccessToken();
 
 function initMap() {
   // The location of Uluru
@@ -54,10 +64,163 @@ async function handleLogin(event) {
   event.preventDefault();
   let { email, password } = event.target;
   const data = await api.login(email.value, password.value);
+  console.log(data);
   if (!data.ok) {
-    document.getElementById("signupMessage").innerHTML = "Invalid ";
+    console.log(data.message);
+    document.getElementById("signupMessage").innerHTML = "Invalid";
   } else {
     let { accessToken } = data;
     setAccessToken(accessToken);
+    setLoggedIn(true);
+    setUserId(data.userId);
+    document.getElementById("signupMessage").innerHTML = "Success!";
+    let allData = await api.getSavedTrackingData(getUserId(), getAccessToken());
+    document.querySelector("#savedTracking").innerHTML = showSideBar(allData);
   }
+}
+document.querySelector("#clear").addEventListener("click", () => {
+  document.querySelector("#trackingInformation").innerHTML = "";
+  document.querySelector("#trackingNumber").value = "";
+});
+document.querySelector("#remove").addEventListener("click", (event) => {
+  handleDelete(event);
+});
+document.querySelector("#save").addEventListener("click", (event) => {
+  handleSave(event);
+});
+document
+  .querySelector("#trackingNumberForm")
+  .addEventListener("submit", (event) => {
+    handleTrackingNumber(event);
+  });
+
+async function handleTrackingNumber(event) {
+  event.preventDefault();
+  let { carrier, trackingNumber } = event.target;
+  const data = await api.getTrackingData(
+    trackingNumber.value,
+    carrier.value,
+    getAccessToken()
+  );
+  if (data.ok) {
+    document.querySelector("#map").innerHTML = showMap(data);
+    document.querySelector("#trackingInformation").innerHTML = showData(data);
+  } else {
+    console.log(carrier.value);
+    document.getElementById("signupMessage").innerHTML = "Invalid";
+  }
+}
+
+async function handleDelete(event) {
+  let userId = localStorage.getItem("userId");
+  let trackingNumber = document.querySelector("#tracking_code").textContent;
+  let data = await api.deleteTrackingData(
+    userId,
+    trackingNumber,
+    getAccessToken()
+  );
+
+  if (data.ok) {
+    document.getElementById("signupMessage").innerHTML = "Record Deleted";
+  } else {
+    document.getElementById("signupMessage").innerHTML = "Record Not Deleted";
+  }
+}
+
+async function handleSave(event) {
+  let userId = localStorage.getItem("userId");
+  let trackingNumber = document.querySelector("#tracking_code").textContent;
+  let carrier = document.querySelector("#carrier").textContent;
+  let data = await api.saveTrackingData(
+    userId,
+    trackingNumber,
+    carrier,
+    getAccessToken()
+  );
+  if (data.ok) {
+    document.getElementById("signupMessage").innerHTML = "Record Saved";
+  } else {
+    document.getElementById("signupMessage").innerHTML = "Record Not Saved";
+  }
+}
+
+//take in easypost data and put data into map in html
+async function showMap(tracker) {
+  let {
+    country,
+    city,
+    state,
+    zip,
+  } = tracker.data.tracking_details.reverse()[0].tracking_location;
+  const data = await api.getGeoData(city, state);
+  let { lng, lat } = data.results[0].geometry.location;
+}
+
+function showData(data) {
+  let { tracking_details, tracking_code, carrier } = data.data;
+  let dataToShow = `
+        <p id="tracking_code">${tracking_code}</p>
+        <p2 id="carrier">${carrier}</p2>
+    `;
+  tracking_details.forEach((obj) => {
+    dataToShow += `<div class="container">
+                        <div class="row">
+                          <div class="col-auto">  
+                            <p3>Message: ${obj.message}</p3>
+                            <p4>Status: ${obj.status}</p4>    
+                            <p5>Location: ${
+                              obj.tracking_location.city
+                                ? obj.tracking_location.city
+                                : "N/A"
+                            }, 
+                            ${
+                              obj.tracking_location.state
+                                ? obj.tracking_location.state
+                                : ""
+                            },
+                            ${
+                              obj.tracking_location.country
+                                ? obj.tracking_location.country
+                                : ""
+                            }${
+      obj.tracking_location.zip ? obj.tracking_location.zip : ""
+    }
+                            <p5>
+                            <p6>${obj.datetime}<p6>
+                            
+                            
+                          </div>
+                        </div>  
+                      </div> `;
+  });
+
+  // {
+  //             "object": "TrackingDetail",
+  //             "message": "Departed from Facility",
+  //             "description": "Departed from Facility",
+  //             "status": "in_transit",
+  //             "status_detail": "departed_facility",
+  //             "datetime": "2021-03-16T08:09:00Z",
+  //             "source": "UPS",
+  //             "carrier_code": "I",
+  //             "tracking_location": {
+  //                 "object": "TrackingLocation",
+  //                 "city": "Hodgkins",
+  //                 "state": "IL",
+  //                 "country": "US",
+  //                 "zip": null
+  //             }
+  //         }
+
+  return dataToShow;
+}
+
+function showSideBar(data) {
+  let sideBarData = ``;
+  if (data.ok) {
+    data.trackingNumbers.forEach((element) => {
+      sideBarData += `<p1>Tracking Number: ${element.number}</p1>`;
+    });
+  }
+  return sideBarData;
 }
