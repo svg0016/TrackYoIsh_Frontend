@@ -1898,9 +1898,6 @@ async function application() {
       );
       carrier = trackingData.carrier;
       trackingNumber = trackingData.trackingNumber;
-      console.log(carrier);
-      console.log(trackingNumber);
-      return;
     } else {
       carrier = event.target.carrier.value;
       trackingNumber = event.target.trackingNumber.value;
