@@ -118,9 +118,11 @@ async function application() {
     let carrier;
     let trackingNumber;
     if (event.target.getAttribute("data-tracking")) {
-      carrier = event.target.getAttribute("data-tracking").carrier;
-      trackingNumber = event.target.getAttribute("data-tracking")
-        .trackingNumber;
+      const trackingData = JSON.parse(
+        event.target.getAttribute("data-tracking")
+      );
+      carrier = trackingData.carrier;
+      trackingNumber = trackingData.trackingNumber;
       console.log(carrier);
       console.log(trackingNumber);
       return;
@@ -233,7 +235,7 @@ async function application() {
     let sideBarData = ``;
     if (data.ok) {
       data.trackingNumbers.forEach((element) => {
-        sideBarData += `<div class='row'> <p1 class='trackingCode' data-tracking='{carrier: ${element.carrier}, trackingNumber: ${element.number}}'>Tracking Number: ${element.number}</p1> </div>`;
+        sideBarData += `<div class='row'> <p1 class='trackingCode' data-tracking='{"carrier": ${element.carrier}, "trackingNumber": ${element.number}}'>Tracking Number: ${element.number}</p1> </div>`;
       });
     }
     return sideBarData;
