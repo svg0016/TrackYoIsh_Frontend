@@ -181,7 +181,14 @@ module.exports = {
 };
 
 },{"axios":5}],3:[function(require,module,exports){
-const { showData, showButtons, showMap, showMessage } = require("./show");
+const {
+  showData,
+  showButtons,
+  showMap,
+  showMessage,
+  populateSideBar,
+} = require("./show");
+const { getAccessToken, setAccessToken, setUserId } = require("./accessToken");
 const api = require("./apicalls");
 async function handleLogin(event) {
   event.preventDefault();
@@ -204,6 +211,7 @@ async function handleLogin(event) {
     populateSideBar();
   }
 }
+
 async function handleDelete(event) {
   let userId = localStorage.getItem("userId");
   let trackingNumber = document.querySelector("#tracking_code").textContent;
@@ -276,6 +284,7 @@ async function handleTrackingNumber(event) {
     );
   }
 }
+
 async function handleSignup(event) {
   event.preventDefault();
   let { firstName, lastName, email, password } = event.target;
@@ -300,7 +309,7 @@ module.exports = {
   handleTrackingNumber,
 };
 
-},{"./apicalls":2,"./show":4}],4:[function(require,module,exports){
+},{"./accessToken":1,"./apicalls":2,"./show":4}],4:[function(require,module,exports){
 const { handleDelete, handleSave } = require("./handlershandle");
 const { getAccessToken, getUserId } = require("./accessToken");
 const api = require("./apicalls");

@@ -1,4 +1,11 @@
-const { showData, showButtons, showMap, showMessage } = require("./show");
+const {
+  showData,
+  showButtons,
+  showMap,
+  showMessage,
+  populateSideBar,
+} = require("./show");
+const { getAccessToken, setAccessToken, setUserId } = require("./accessToken");
 const api = require("./apicalls");
 async function handleLogin(event) {
   event.preventDefault();
@@ -21,6 +28,7 @@ async function handleLogin(event) {
     populateSideBar();
   }
 }
+
 async function handleDelete(event) {
   let userId = localStorage.getItem("userId");
   let trackingNumber = document.querySelector("#tracking_code").textContent;
@@ -93,6 +101,7 @@ async function handleTrackingNumber(event) {
     );
   }
 }
+
 async function handleSignup(event) {
   event.preventDefault();
   let { firstName, lastName, email, password } = event.target;
