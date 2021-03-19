@@ -2078,7 +2078,7 @@ async function application() {
     document.querySelector("#savedTracking").innerHTML = showSideBar(allData);
     let trackingCodes = document.querySelectorAll(".trackingCode");
     trackingCodes.forEach((element) => {
-      element.addEventListener("click", handleTrackingNumber);
+      element.addEventListener("click", (event) => handleTrackingNumber(event));
     });
   }
 
