@@ -2002,7 +2002,7 @@ async function application() {
       dataToShow += `<div class="container">
                         <div class="row">
                           <div class="col-auto">  
-                            <p3>${obj.message} </p3>
+                            <p3>- ${obj.message} </p3>
                             <p4>${obj.status} </p4>    
                             <p5>${
                               obj.tracking_location.city
