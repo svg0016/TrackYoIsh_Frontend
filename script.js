@@ -1,21 +1,13 @@
 const api = require("./js/apicalls");
-const {
-  setAccessToken,
-  getAccessToken,
-  refreshAccessToken,
-  setLoggedIn,
-  getLoggedIn,
-  getUserId,
-  setUserId,
-} = require("./js/accessToken");
+const { refreshAccessToken, getLoggedIn } = require("./js/accessToken");
+
+const { showButtons, populateSideBar } = require("./js/show");
 
 const {
-  showData,
-  showButtons,
-  showMap,
-  showSideBar,
-  showMessage,
-} = require("./js/show");
+  handleLogin,
+  handleSignup,
+  handleTrackingNumber,
+} = require("./js/handlershandle");
 
 async function load() {
   await refreshAccessToken();
@@ -29,15 +21,6 @@ async function application() {
     document.querySelector("#signupForm").textContent = "";
     document.querySelector("#loginArea").textContent = "";
     populateSideBar();
-  }
-
-  async function populateSideBar() {
-    let allData = await api.getSavedTrackingData(getUserId(), getAccessToken());
-    document.querySelector("#savedTracking").innerHTML = showSideBar(allData);
-    let trackingCodes = document.querySelectorAll(".trackingCode");
-    trackingCodes.forEach((element) => {
-      element.addEventListener("click", (event) => handleTrackingNumber(event));
-    });
   }
 
   if (!getLoggedIn()) {

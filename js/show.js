@@ -1,4 +1,6 @@
 const { handleDelete, handleSave } = require("./handlershandle");
+const { getAccessToken, getUserId } = require("./accessToken");
+const api = require("./js/apicalls");
 let cleared = true;
 
 function showData(data) {
@@ -144,4 +146,20 @@ function clearDivs() {
   showButtons();
 }
 
-module.exports = { showData, showButtons, showMap, showSideBar, showMessage };
+async function populateSideBar() {
+  let allData = await api.getSavedTrackingData(getUserId(), getAccessToken());
+  document.querySelector("#savedTracking").innerHTML = showSideBar(allData);
+  let trackingCodes = document.querySelectorAll(".trackingCode");
+  trackingCodes.forEach((element) => {
+    element.addEventListener("click", (event) => handleTrackingNumber(event));
+  });
+}
+
+module.exports = {
+  showData,
+  showButtons,
+  showMap,
+  showSideBar,
+  showMessage,
+  populateSideBar,
+};

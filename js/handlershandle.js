@@ -1,3 +1,5 @@
+const { showData, showButtons, showMap, showMessage } = require("./show");
+const api = require("./js/apicalls");
 async function handleLogin(event) {
   event.preventDefault();
   let { email, password } = event.target;
