@@ -7,7 +7,6 @@ const {
   getLoggedIn,
   getUserId,
   setUserId,
-  getLoading,
 } = require("./js/accessToken");
 
 let cleared = true;
