@@ -1,4 +1,5 @@
 const { handleDelete, handleSave } = require("./handlershandle");
+let cleared = true;
 
 function showData(data) {
   let { tracking_details, tracking_code, carrier } = data.data;
@@ -67,7 +68,9 @@ function showSideBar(data) {
   let sideBarData = ``;
   if (data.ok) {
     data.trackingNumbers.forEach((element) => {
-      sideBarData += `<div class='row'><div class='col-sm-6 col-md-6 col-lg-4 col-xl-auto'> <p1 class='trackingCode' data-tracking='{"carrier": "${element.carrier}", "trackingNumber": "${element.number}"}'>Tracking Number: ${element.number}</p1> </div></div>`;
+      sideBarData += `<div class='row'><div class='col-sm-6 col-md-6 col-lg-4 col-xl-auto'> 
+      <p1 class='trackingCode' data-tracking='{"carrier": "${element.carrier}", "trackingNumber": "${element.number}"}'>
+      Tracking Number: ${element.number}</p1> </div></div>`;
     });
   }
   return sideBarData;
@@ -87,7 +90,9 @@ function showSideBar(data) {
   let sideBarData = ``;
   if (data.ok) {
     data.trackingNumbers.forEach((element) => {
-      sideBarData += `<div class='row'><div class='col-sm-6 col-md-6 col-lg-4 col-xl-auto'> <p1 class='trackingCode' data-tracking='{"carrier": "${element.carrier}", "trackingNumber": "${element.number}"}'>Tracking Number: ${element.number}</p1> </div></div>`;
+      sideBarData += `<div class='row'><div class='col-sm-6 col-md-6 col-lg-4 col-xl-auto'> 
+      <p1 class='trackingCode' data-tracking='{"carrier": "${element.carrier}", "trackingNumber": "${element.number}"}'>
+      Tracking Number: ${element.number}</p1> </div></div>`;
     });
   }
   return sideBarData;
@@ -121,6 +126,22 @@ function showMessage(message) {
           ></button>
         </div>
           `;
+}
+
+function consoleButtonsJS() {
+  return `
+      <button class="btn btn-primary" type="button" id="clear">Clear</button>
+      <button class="btn btn-primary" type="button" id="save"">Save</button>
+      <button class="btn btn-danger" type="button" id="remove">Remove</button>
+    `;
+}
+
+function clearDivs() {
+  document.querySelector("#trackingData").textContent = "";
+  document.querySelector("#trackingNumber").value = "";
+  document.querySelector("#map").textContent = "";
+  cleared = true;
+  showButtons();
 }
 
 module.exports = { showData, showButtons, showMap, showSideBar, showMessage };

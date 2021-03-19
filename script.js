@@ -17,8 +17,6 @@ const {
   showMessage,
 } = require("./js/show");
 
-let cleared = true;
-
 async function load() {
   await refreshAccessToken();
 }
@@ -59,22 +57,6 @@ async function application() {
     .addEventListener("submit", (event) => {
       handleTrackingNumber(event);
     });
-
-  function clearDivs() {
-    document.querySelector("#trackingData").textContent = "";
-    document.querySelector("#trackingNumber").value = "";
-    document.querySelector("#map").textContent = "";
-    cleared = true;
-    showButtons();
-  }
-
-  function consoleButtonsJS() {
-    return `
-      <button class="btn btn-primary" type="button" id="clear">Clear</button>
-      <button class="btn btn-primary" type="button" id="save"">Save</button>
-      <button class="btn btn-danger" type="button" id="remove">Remove</button>
-    `;
-  }
 }
 
 application();

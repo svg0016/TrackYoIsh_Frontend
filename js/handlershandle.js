@@ -106,3 +106,11 @@ async function handleSignup(event) {
     api.login(email.value, password.value);
   }
 }
+
+module.exports = {
+  handleDelete,
+  handleLogin,
+  handleSave,
+  handleSignup,
+  handleTrackingNumber,
+};
