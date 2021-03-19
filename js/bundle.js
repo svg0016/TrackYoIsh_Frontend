@@ -357,7 +357,11 @@ async function application() {
 application();
 
 },{"./accessToken":1,"./apicalls":2,"./handlershandle":3,"./show":5}],5:[function(require,module,exports){
-const { handleDelete, handleSave } = require("./handlershandle");
+const {
+  handleDelete,
+  handleSave,
+  handleTrackingNumber,
+} = require("./handlershandle");
 const { getAccessToken, getUserId } = require("./accessToken");
 const api = require("./apicalls");
 let cleared = true;
@@ -445,18 +449,6 @@ async function showMap(tracker) {
   const data = await api.getGeoData(city, state);
   let { lng, lat } = data.results[0].geometry.location;
   initMap(lng, lat);
-}
-
-function showSideBar(data) {
-  let sideBarData = ``;
-  if (data.ok) {
-    data.trackingNumbers.forEach((element) => {
-      sideBarData += `<div class='row'><div class='col-sm-6 col-md-6 col-lg-4 col-xl-auto'> 
-      <p1 class='trackingCode' data-tracking='{"carrier": "${element.carrier}", "trackingNumber": "${element.number}"}'>
-      Tracking Number: ${element.number}</p1> </div></div>`;
-    });
-  }
-  return sideBarData;
 }
 
 function initMap(lng, lat) {
