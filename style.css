@@ -1,5 +1,11 @@
-/* Set the size of the div element that contains the map */
+body {
+  margin: 0;
+  padding: 0;
+}
 
+.navbar {
+  padding-top: 0;
+}
 #map {
   height: 200px;
   /* The height is 400 pixels */
