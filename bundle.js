@@ -79,7 +79,7 @@ module.exports = {
   getLoading,
 };
 
-},{"axios":6}],2:[function(require,module,exports){
+},{"axios":3}],2:[function(require,module,exports){
 const axios = require("axios").default;
 
 const login = async (email, password) => {
@@ -180,350 +180,9 @@ module.exports = {
   getGeoData,
 };
 
-},{"axios":6}],3:[function(require,module,exports){
-const {
-  showData,
-  showButtons,
-  showMap,
-  showMessage,
-  populateSideBar,
-} = require("./show");
-const {
-  getAccessToken,
-  setAccessToken,
-  setUserId,
-  setLoggedIn,
-} = require("./accessToken");
-const api = require("./apicalls");
-
-async function handleLogin(event) {
-  event.preventDefault();
-  let { email, password } = event.target;
-  const data = await api.login(email.value, password.value);
-  if (!data.ok) {
-    document.getElementById("ishMessenger").innerHTML = showMessage(
-      "Ivalid Login!"
-    );
-  } else {
-    let { accessToken } = data;
-    setAccessToken(accessToken);
-    setLoggedIn(true);
-    setUserId(data.userId);
-    document.getElementById("ishMessenger").innerHTML = showMessage(
-      "Login Successful!"
-    );
-    document.querySelector("#signupForm").textContent = "";
-    document.querySelector("#loginArea").textContent = "";
-    populateSideBar();
-  }
-}
-
-async function handleDelete(event) {
-  let userId = localStorage.getItem("userId");
-  let trackingNumber = document.querySelector("#tracking_code").textContent;
-  let data = await api.deleteTrackingData(
-    userId,
-    trackingNumber,
-    getAccessToken()
-  );
-
-  if (data.ok) {
-    document.getElementById("ishMessenger").innerHTML = showMessage(
-      "Record Deleted!"
-    );
-    populateSideBar();
-  } else {
-    document.getElementById("ishMessenger").innerHTML = showMessage(
-      "Record Not Deleted"
-    );
-  }
-}
-
-async function handleSave(event) {
-  let userId = localStorage.getItem("userId");
-  let trackingNumber = document.querySelector("#tracking_code").textContent;
-  let carrier = document.querySelector("#carrier").textContent;
-  let data = await api.saveTrackingData(
-    userId,
-    trackingNumber,
-    carrier,
-    getAccessToken()
-  );
-  if (data.ok) {
-    document.getElementById("ishMessenger").innerHTML = showMessage(
-      "Record Saved!"
-    );
-    populateSideBar();
-  } else {
-    document.getElementById("ishMessenger").innerHTML = showMessage(
-      "Record Not Saved!"
-    );
-  }
-}
-
-async function handleTrackingNumber(event) {
-  event.preventDefault();
-  let carrier;
-  let trackingNumber;
-  if (event.target.getAttribute("data-tracking")) {
-    const trackingData = JSON.parse(event.target.getAttribute("data-tracking"));
-    carrier = trackingData.carrier;
-    trackingNumber = trackingData.trackingNumber;
-  } else {
-    carrier = event.target.carrier.value;
-    trackingNumber = event.target.trackingNumber.value;
-  }
-  const data = await api.getTrackingData(
-    trackingNumber,
-    carrier,
-    getAccessToken()
-  );
-  if (data.ok) {
-    document.querySelector("#map").innerHTML = showMap(data);
-    document.querySelector("#trackingData").innerHTML = showData(data);
-    cleared = false;
-    showButtons();
-    populateSideBar();
-  } else {
-    document.getElementById("ishMessenger").innerHTML = showMessage(
-      "Invalid Tracking Data!"
-    );
-  }
-}
-
-async function handleSignup(event) {
-  event.preventDefault();
-  let { firstName, lastName, email, password } = event.target;
-  const data = await api.signup(
-    firstName.value,
-    lastName.value,
-    email.value,
-    password.value
-  );
-  if (!data.ok) {
-    document.querySelector("#emailSignupField").style.backgroundcolor = "red";
-  } else {
-    api.login(email.value, password.value);
-  }
-}
-
-module.exports = {
-  handleDelete,
-  handleLogin,
-  handleSave,
-  handleSignup,
-  handleTrackingNumber,
-};
-
-},{"./accessToken":1,"./apicalls":2,"./show":5}],4:[function(require,module,exports){
-const api = require("./apicalls");
-const { refreshAccessToken, getLoggedIn } = require("./accessToken");
-
-const { showButtons, populateSideBar } = require("./show");
-
-const {
-  handleLogin,
-  handleSignup,
-  handleTrackingNumber,
-} = require("./handlershandle");
-
-async function load() {
-  await refreshAccessToken();
-}
-
-async function application() {
-  await load();
-  showButtons();
-
-  if (getLoggedIn()) {
-    document.querySelector("#signupForm").textContent = "";
-    document.querySelector("#loginArea").textContent = "";
-    populateSideBar();
-  }
-
-  if (!getLoggedIn()) {
-    document
-      .querySelector("#signupForm")
-      .addEventListener("submit", (event) => {
-        handleSignup(event);
-      });
-
-    document.querySelector("#loginForm").addEventListener("submit", (event) => {
-      handleLogin(event);
-    });
-  }
-
-  document
-    .querySelector("#trackingNumberForm")
-    .addEventListener("submit", (event) => {
-      handleTrackingNumber(event);
-    });
-}
-
-application();
-
-},{"./accessToken":1,"./apicalls":2,"./handlershandle":3,"./show":5}],5:[function(require,module,exports){
-const {
-  handleDelete,
-  handleSave,
-  handleTrackingNumber,
-} = require("./handlershandle");
-const { getAccessToken, getUserId } = require("./accessToken");
-const api = require("./apicalls");
-let cleared = true;
-
-function showData(data) {
-  let { tracking_details, tracking_code, carrier } = data.data;
-  let dataToShow = `
-        <div>Tracking Number: <p id="tracking_code">${tracking_code}</p></div>
-        <div>Carrier: <p2 id="carrier">${carrier}</p2></div>
-    `;
-  tracking_details.forEach((obj) => {
-    dataToShow += `<div class="container">
-                        <div class="row">
-                          <div class="col-auto">  
-                            <p3>- ${obj.message} </p3>
-                            <p4>${obj.status} </p4>    
-                            <p5>${
-                              obj.tracking_location.city
-                                ? obj.tracking_location.city
-                                : "N/A"
-                            }, 
-                            ${
-                              obj.tracking_location.state
-                                ? obj.tracking_location.state
-                                : ""
-                            },
-                            ${
-                              obj.tracking_location.country
-                                ? obj.tracking_location.country
-                                : ""
-                            }${
-      obj.tracking_location.zip ? obj.tracking_location.zip : ""
-    }
-                            </p5>
-                          </div>
-                        </div>  
-                      </div> `;
-  });
-  return dataToShow;
-}
-
-function showButtons() {
-  if (cleared) {
-    document.querySelector("#consoleButtons").textContent = "";
-  } else {
-    document.querySelector("#consoleButtons").innerHTML = consoleButtonsJS();
-    document.querySelector("#clear").addEventListener("click", clearDivs);
-    document.querySelector("#remove").addEventListener("click", (event) => {
-      handleDelete(event);
-      clearDivs();
-    });
-    document.querySelector("#save").addEventListener("click", (event) => {
-      handleSave(event);
-    });
-  }
-}
-
-async function showMap(tracker) {
-  let {
-    city,
-    state,
-  } = tracker.data.tracking_details.reverse()[0].tracking_location;
-  const data = await api.getGeoData(city, state);
-  let { lng, lat } = data.results[0].geometry.location;
-  initMap(lng, lat);
-}
-
-function showSideBar(data) {
-  let sideBarData = ``;
-  if (data.ok) {
-    data.trackingNumbers.forEach((element) => {
-      sideBarData += `<div class='row'><div class='col-sm-6 col-md-6 col-lg-4 col-xl-auto'> 
-      <p1 class='trackingCode' data-tracking='{"carrier": "${element.carrier}", "trackingNumber": "${element.number}"}'>
-      Tracking Number: ${element.number}</p1> </div></div>`;
-    });
-  }
-  return sideBarData;
-}
-
-async function showMap(tracker) {
-  let {
-    city,
-    state,
-  } = tracker.data.tracking_details.reverse()[0].tracking_location;
-  const data = await api.getGeoData(city, state);
-  let { lng, lat } = data.results[0].geometry.location;
-  initMap(lng, lat);
-}
-
-function initMap(lng, lat) {
-  // The location of Uluru
-  const uluru = { lat, lng };
-
-  // The map, centered at Uluru
-  const map = new google.maps.Map(document.getElementById("map"), {
-    zoom: 4,
-    center: uluru,
-  });
-  // The marker, positioned at Uluru
-  const marker = new google.maps.Marker({
-    position: uluru,
-    map: map,
-  });
-}
-
-function showMessage(message) {
-  return `
-        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-          <div>${message}</div>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="alert"
-            aria-label="Close"
-          ></button>
-        </div>
-          `;
-}
-
-function consoleButtonsJS() {
-  return `
-      <button class="btn btn-primary" type="button" id="clear">Clear</button>
-      <button class="btn btn-primary" type="button" id="save"">Save</button>
-      <button class="btn btn-danger" type="button" id="remove">Remove</button>
-    `;
-}
-
-function clearDivs() {
-  document.querySelector("#trackingData").textContent = "";
-  document.querySelector("#trackingNumber").value = "";
-  document.querySelector("#map").textContent = "";
-  cleared = true;
-  showButtons();
-}
-
-async function populateSideBar() {
-  let allData = await api.getSavedTrackingData(getUserId(), getAccessToken());
-  document.querySelector("#savedTracking").innerHTML = showSideBar(allData);
-  let trackingCodes = document.querySelectorAll(".trackingCode");
-  trackingCodes.forEach((element) => {
-    element.addEventListener("click", (event) => handleTrackingNumber(event));
-  });
-}
-
-module.exports = {
-  showData,
-  showButtons,
-  showMap,
-  showSideBar,
-  showMessage,
-  populateSideBar,
-};
-
-},{"./accessToken":1,"./apicalls":2,"./handlershandle":3}],6:[function(require,module,exports){
+},{"axios":3}],3:[function(require,module,exports){
 module.exports = require('./lib/axios');
-},{"./lib/axios":8}],7:[function(require,module,exports){
+},{"./lib/axios":5}],4:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -704,7 +363,7 @@ module.exports = function xhrAdapter(config) {
   });
 };
 
-},{"../core/buildFullPath":14,"../core/createError":15,"./../core/settle":19,"./../helpers/buildURL":23,"./../helpers/cookies":25,"./../helpers/isURLSameOrigin":28,"./../helpers/parseHeaders":30,"./../utils":32}],8:[function(require,module,exports){
+},{"../core/buildFullPath":11,"../core/createError":12,"./../core/settle":16,"./../helpers/buildURL":20,"./../helpers/cookies":22,"./../helpers/isURLSameOrigin":25,"./../helpers/parseHeaders":27,"./../utils":29}],5:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -762,7 +421,7 @@ module.exports = axios;
 // Allow use of default import syntax in TypeScript
 module.exports.default = axios;
 
-},{"./cancel/Cancel":9,"./cancel/CancelToken":10,"./cancel/isCancel":11,"./core/Axios":12,"./core/mergeConfig":18,"./defaults":21,"./helpers/bind":22,"./helpers/isAxiosError":27,"./helpers/spread":31,"./utils":32}],9:[function(require,module,exports){
+},{"./cancel/Cancel":6,"./cancel/CancelToken":7,"./cancel/isCancel":8,"./core/Axios":9,"./core/mergeConfig":15,"./defaults":18,"./helpers/bind":19,"./helpers/isAxiosError":24,"./helpers/spread":28,"./utils":29}],6:[function(require,module,exports){
 'use strict';
 
 /**
@@ -783,7 +442,7 @@ Cancel.prototype.__CANCEL__ = true;
 
 module.exports = Cancel;
 
-},{}],10:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 'use strict';
 
 var Cancel = require('./Cancel');
@@ -842,14 +501,14 @@ CancelToken.source = function source() {
 
 module.exports = CancelToken;
 
-},{"./Cancel":9}],11:[function(require,module,exports){
+},{"./Cancel":6}],8:[function(require,module,exports){
 'use strict';
 
 module.exports = function isCancel(value) {
   return !!(value && value.__CANCEL__);
 };
 
-},{}],12:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -946,7 +605,7 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 
 module.exports = Axios;
 
-},{"../helpers/buildURL":23,"./../utils":32,"./InterceptorManager":13,"./dispatchRequest":16,"./mergeConfig":18}],13:[function(require,module,exports){
+},{"../helpers/buildURL":20,"./../utils":29,"./InterceptorManager":10,"./dispatchRequest":13,"./mergeConfig":15}],10:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1000,7 +659,7 @@ InterceptorManager.prototype.forEach = function forEach(fn) {
 
 module.exports = InterceptorManager;
 
-},{"./../utils":32}],14:[function(require,module,exports){
+},{"./../utils":29}],11:[function(require,module,exports){
 'use strict';
 
 var isAbsoluteURL = require('../helpers/isAbsoluteURL');
@@ -1022,7 +681,7 @@ module.exports = function buildFullPath(baseURL, requestedURL) {
   return requestedURL;
 };
 
-},{"../helpers/combineURLs":24,"../helpers/isAbsoluteURL":26}],15:[function(require,module,exports){
+},{"../helpers/combineURLs":21,"../helpers/isAbsoluteURL":23}],12:[function(require,module,exports){
 'use strict';
 
 var enhanceError = require('./enhanceError');
@@ -1042,7 +701,7 @@ module.exports = function createError(message, config, code, request, response) 
   return enhanceError(error, config, code, request, response);
 };
 
-},{"./enhanceError":17}],16:[function(require,module,exports){
+},{"./enhanceError":14}],13:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1123,7 +782,7 @@ module.exports = function dispatchRequest(config) {
   });
 };
 
-},{"../cancel/isCancel":11,"../defaults":21,"./../utils":32,"./transformData":20}],17:[function(require,module,exports){
+},{"../cancel/isCancel":8,"../defaults":18,"./../utils":29,"./transformData":17}],14:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1167,7 +826,7 @@ module.exports = function enhanceError(error, config, code, request, response) {
   return error;
 };
 
-},{}],18:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -1256,7 +915,7 @@ module.exports = function mergeConfig(config1, config2) {
   return config;
 };
 
-},{"../utils":32}],19:[function(require,module,exports){
+},{"../utils":29}],16:[function(require,module,exports){
 'use strict';
 
 var createError = require('./createError');
@@ -1283,7 +942,7 @@ module.exports = function settle(resolve, reject, response) {
   }
 };
 
-},{"./createError":15}],20:[function(require,module,exports){
+},{"./createError":12}],17:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1305,7 +964,7 @@ module.exports = function transformData(data, headers, fns) {
   return data;
 };
 
-},{"./../utils":32}],21:[function(require,module,exports){
+},{"./../utils":29}],18:[function(require,module,exports){
 (function (process){(function (){
 'use strict';
 
@@ -1407,7 +1066,7 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 module.exports = defaults;
 
 }).call(this)}).call(this,require('_process'))
-},{"./adapters/http":7,"./adapters/xhr":7,"./helpers/normalizeHeaderName":29,"./utils":32,"_process":33}],22:[function(require,module,exports){
+},{"./adapters/http":4,"./adapters/xhr":4,"./helpers/normalizeHeaderName":26,"./utils":29,"_process":31}],19:[function(require,module,exports){
 'use strict';
 
 module.exports = function bind(fn, thisArg) {
@@ -1420,7 +1079,7 @@ module.exports = function bind(fn, thisArg) {
   };
 };
 
-},{}],23:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1492,7 +1151,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
   return url;
 };
 
-},{"./../utils":32}],24:[function(require,module,exports){
+},{"./../utils":29}],21:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1508,7 +1167,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
     : baseURL;
 };
 
-},{}],25:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1563,7 +1222,7 @@ module.exports = (
     })()
 );
 
-},{"./../utils":32}],26:[function(require,module,exports){
+},{"./../utils":29}],23:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1579,7 +1238,7 @@ module.exports = function isAbsoluteURL(url) {
   return /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(url);
 };
 
-},{}],27:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1592,7 +1251,7 @@ module.exports = function isAxiosError(payload) {
   return (typeof payload === 'object') && (payload.isAxiosError === true);
 };
 
-},{}],28:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1662,7 +1321,7 @@ module.exports = (
     })()
 );
 
-},{"./../utils":32}],29:[function(require,module,exports){
+},{"./../utils":29}],26:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -1676,7 +1335,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
   });
 };
 
-},{"../utils":32}],30:[function(require,module,exports){
+},{"../utils":29}],27:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1731,7 +1390,7 @@ module.exports = function parseHeaders(headers) {
   return parsed;
 };
 
-},{"./../utils":32}],31:[function(require,module,exports){
+},{"./../utils":29}],28:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1760,7 +1419,7 @@ module.exports = function spread(callback) {
   };
 };
 
-},{}],32:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 'use strict';
 
 var bind = require('./helpers/bind');
@@ -2113,7 +1772,300 @@ module.exports = {
   stripBOM: stripBOM
 };
 
-},{"./helpers/bind":22}],33:[function(require,module,exports){
+},{"./helpers/bind":19}],30:[function(require,module,exports){
+const api = require("./js/apicalls");
+const {
+  setAccessToken,
+  getAccessToken,
+  refreshAccessToken,
+  setLoggedIn,
+  getLoggedIn,
+  getUserId,
+  setUserId,
+} = require("./js/accessToken");
+
+let cleared = true;
+
+async function load() {
+  await refreshAccessToken();
+}
+
+async function application() {
+  await load();
+  showButtons();
+
+  if (getLoggedIn()) {
+    document.querySelector("#signupForm").textContent = "";
+    document.querySelector("#loginArea").textContent = "";
+    populateSideBar();
+  }
+
+  async function populateSideBar() {
+    let allData = await api.getSavedTrackingData(getUserId(), getAccessToken());
+    document.querySelector("#savedTracking").innerHTML = showSideBar(allData);
+    let trackingCodes = document.querySelectorAll(".trackingCode");
+    trackingCodes.forEach((element) => {
+      element.addEventListener("click", handleTrackingNumber);
+    });
+  }
+
+  function initMap(lng, lat) {
+    // The location of Uluru
+    const uluru = { lat, lng };
+
+    // The map, centered at Uluru
+    const map = new google.maps.Map(document.getElementById("map"), {
+      zoom: 4,
+      center: uluru,
+    });
+    // The marker, positioned at Uluru
+    const marker = new google.maps.Marker({
+      position: uluru,
+      map: map,
+    });
+  }
+
+  function showMessage(message) {
+    return `
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+          <div>${message}</div>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+          ></button>
+        </div>
+          `;
+  }
+
+  if (!getLoggedIn()) {
+    document
+      .querySelector("#signupForm")
+      .addEventListener("submit", (event) => {
+        handleSignup(event);
+      });
+
+    async function handleSignup(event) {
+      event.preventDefault();
+      let { firstName, lastName, email, password } = event.target;
+      const data = await api.signup(
+        firstName.value,
+        lastName.value,
+        email.value,
+        password.value
+      );
+      if (!data.ok) {
+        document.querySelector("#emailSignupField").style.backgroundcolor =
+          "red";
+      } else {
+        api.login(email.value, password.value);
+      }
+    }
+    document.querySelector("#loginForm").addEventListener("submit", (event) => {
+      handleLogin(event);
+    });
+
+    async function handleLogin(event) {
+      event.preventDefault();
+      let { email, password } = event.target;
+      const data = await api.login(email.value, password.value);
+      if (!data.ok) {
+        document.getElementById("ishMessenger").innerHTML = showMessage(
+          "Ivalid Login!"
+        );
+      } else {
+        let { accessToken } = data;
+        setAccessToken(accessToken);
+        setLoggedIn(true);
+        setUserId(data.userId);
+        document.getElementById("ishMessenger").innerHTML = showMessage(
+          "Login Successful!"
+        );
+        document.querySelector("#signupForm").textContent = "";
+        document.querySelector("#loginArea").textContent = "";
+        populateSideBar();
+      }
+    }
+  }
+
+  document
+    .querySelector("#trackingNumberForm")
+    .addEventListener("submit", (event) => {
+      handleTrackingNumber(event);
+    });
+
+  function clearDivs() {
+    document.querySelector("#trackingData").textContent = "";
+    document.querySelector("#trackingNumber").value = "";
+    document.querySelector("#map").textContent = "";
+    cleared = true;
+    showButtons();
+  }
+
+  async function handleTrackingNumber(event) {
+    event.preventDefault();
+    let carrier;
+    let trackingNumber;
+    if (event.target.getAttribute("data-tracking")) {
+      const trackingData = JSON.parse(
+        event.target.getAttribute("data-tracking")
+      );
+      carrier = trackingData.carrier;
+      trackingNumber = trackingData.trackingNumber;
+    } else {
+      carrier = event.target.carrier.value;
+      trackingNumber = event.target.trackingNumber.value;
+    }
+    const data = await api.getTrackingData(
+      trackingNumber,
+      carrier,
+      getAccessToken()
+    );
+    if (data.ok) {
+      document.querySelector("#map").innerHTML = showMap(data);
+      document.querySelector("#trackingData").innerHTML = showData(data);
+      cleared = false;
+      showButtons();
+      populateSideBar();
+    } else {
+      document.getElementById("ishMessenger").innerHTML = showMessage(
+        "Invalid Tracking Data!"
+      );
+    }
+  }
+
+  async function handleDelete(event) {
+    let userId = localStorage.getItem("userId");
+    let trackingNumber = document.querySelector("#tracking_code").textContent;
+    let data = await api.deleteTrackingData(
+      userId,
+      trackingNumber,
+      getAccessToken()
+    );
+
+    if (data.ok) {
+      document.getElementById("ishMessenger").innerHTML = showMessage(
+        "Record Deleted!"
+      );
+      populateSideBar();
+    } else {
+      document.getElementById("ishMessenger").innerHTML = showMessage(
+        "Record Not Deleted"
+      );
+    }
+  }
+
+  async function handleSave(event) {
+    let userId = localStorage.getItem("userId");
+    let trackingNumber = document.querySelector("#tracking_code").textContent;
+    let carrier = document.querySelector("#carrier").textContent;
+    let data = await api.saveTrackingData(
+      userId,
+      trackingNumber,
+      carrier,
+      getAccessToken()
+    );
+    if (data.ok) {
+      document.getElementById("ishMessenger").innerHTML = showMessage(
+        "Record Saved!"
+      );
+      populateSideBar();
+    } else {
+      document.getElementById("ishMessenger").innerHTML = showMessage(
+        "Record Not Saved!"
+      );
+    }
+  }
+
+  //take in easypost data and put data into map in html
+  async function showMap(tracker) {
+    let {
+      country,
+      city,
+      state,
+      zip,
+    } = tracker.data.tracking_details.reverse()[0].tracking_location;
+    const data = await api.getGeoData(city, state);
+    let { lng, lat } = data.results[0].geometry.location;
+    initMap(lng, lat);
+  }
+
+  function showData(data) {
+    let { tracking_details, tracking_code, carrier } = data.data;
+    let dataToShow = `
+        <div>Tracking Number: <p id="tracking_code">${tracking_code}</p></div>
+        <div>Carrier: <p2 id="carrier">${carrier}</p2></div>
+    `;
+    tracking_details.forEach((obj) => {
+      dataToShow += `<div class="container">
+                        <div class="row">
+                          <div class="col-auto">  
+                            <p3>- ${obj.message} </p3>
+                            <p4>${obj.status} </p4>    
+                            <p5>${
+                              obj.tracking_location.city
+                                ? obj.tracking_location.city
+                                : "N/A"
+                            }, 
+                            ${
+                              obj.tracking_location.state
+                                ? obj.tracking_location.state
+                                : ""
+                            },
+                            ${
+                              obj.tracking_location.country
+                                ? obj.tracking_location.country
+                                : ""
+                            }${
+        obj.tracking_location.zip ? obj.tracking_location.zip : ""
+      }
+                            </p5>
+                          </div>
+                        </div>  
+                      </div> `;
+    });
+    return dataToShow;
+  }
+
+  function showSideBar(data) {
+    let sideBarData = ``;
+    if (data.ok) {
+      data.trackingNumbers.forEach((element) => {
+        sideBarData += `<div class='row'><div class='col-sm-6 col-md-6 col-lg-4 col-xl-auto'> <p1 class='trackingCode' data-tracking='{"carrier": "${element.carrier}", "trackingNumber": "${element.number}"}'>Tracking Number: ${element.number}</p1> </div></div>`;
+      });
+    }
+    return sideBarData;
+  }
+
+  function showButtons() {
+    if (cleared) {
+      document.querySelector("#consoleButtons").textContent = "";
+    } else {
+      document.querySelector("#consoleButtons").innerHTML = consoleButtonsJS();
+      document.querySelector("#clear").addEventListener("click", clearDivs);
+      document.querySelector("#remove").addEventListener("click", (event) => {
+        handleDelete(event);
+        clearDivs();
+      });
+      document.querySelector("#save").addEventListener("click", (event) => {
+        handleSave(event);
+      });
+    }
+  }
+
+  function consoleButtonsJS() {
+    return `
+      <button class="btn btn-primary" type="button" id="clear">Clear</button>
+      <button class="btn btn-primary" type="button" id="save"">Save</button>
+      <button class="btn btn-danger" type="button" id="remove">Remove</button>
+    `;
+  }
+}
+
+application();
+
+},{"./js/accessToken":1,"./js/apicalls":2}],31:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -2299,4 +2251,4 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}]},{},[1,2,3,4,5]);
+},{}]},{},[30]);
