@@ -1,3 +1,5 @@
+const { handleDelete, handleSave } = require("./handlershandle");
+
 function showData(data) {
   let { tracking_details, tracking_code, carrier } = data.data;
   let dataToShow = `
@@ -35,4 +37,90 @@ function showData(data) {
   return dataToShow;
 }
 
-module.exports = { showData };
+function showButtons() {
+  if (cleared) {
+    document.querySelector("#consoleButtons").textContent = "";
+  } else {
+    document.querySelector("#consoleButtons").innerHTML = consoleButtonsJS();
+    document.querySelector("#clear").addEventListener("click", clearDivs);
+    document.querySelector("#remove").addEventListener("click", (event) => {
+      handleDelete(event);
+      clearDivs();
+    });
+    document.querySelector("#save").addEventListener("click", (event) => {
+      handleSave(event);
+    });
+  }
+}
+
+async function showMap(tracker) {
+  let {
+    city,
+    state,
+  } = tracker.data.tracking_details.reverse()[0].tracking_location;
+  const data = await api.getGeoData(city, state);
+  let { lng, lat } = data.results[0].geometry.location;
+  initMap(lng, lat);
+}
+
+function showSideBar(data) {
+  let sideBarData = ``;
+  if (data.ok) {
+    data.trackingNumbers.forEach((element) => {
+      sideBarData += `<div class='row'><div class='col-sm-6 col-md-6 col-lg-4 col-xl-auto'> <p1 class='trackingCode' data-tracking='{"carrier": "${element.carrier}", "trackingNumber": "${element.number}"}'>Tracking Number: ${element.number}</p1> </div></div>`;
+    });
+  }
+  return sideBarData;
+}
+
+async function showMap(tracker) {
+  let {
+    city,
+    state,
+  } = tracker.data.tracking_details.reverse()[0].tracking_location;
+  const data = await api.getGeoData(city, state);
+  let { lng, lat } = data.results[0].geometry.location;
+  initMap(lng, lat);
+}
+
+function showSideBar(data) {
+  let sideBarData = ``;
+  if (data.ok) {
+    data.trackingNumbers.forEach((element) => {
+      sideBarData += `<div class='row'><div class='col-sm-6 col-md-6 col-lg-4 col-xl-auto'> <p1 class='trackingCode' data-tracking='{"carrier": "${element.carrier}", "trackingNumber": "${element.number}"}'>Tracking Number: ${element.number}</p1> </div></div>`;
+    });
+  }
+  return sideBarData;
+}
+
+function initMap(lng, lat) {
+  // The location of Uluru
+  const uluru = { lat, lng };
+
+  // The map, centered at Uluru
+  const map = new google.maps.Map(document.getElementById("map"), {
+    zoom: 4,
+    center: uluru,
+  });
+  // The marker, positioned at Uluru
+  const marker = new google.maps.Marker({
+    position: uluru,
+    map: map,
+  });
+}
+
+function showMessage(message) {
+  return `
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+          <div>${message}</div>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+          ></button>
+        </div>
+          `;
+}
+
+module.exports = { showData, showButtons, showMap, showSideBar, showMessage };
