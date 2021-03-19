@@ -51,6 +51,20 @@ async function application() {
     });
   }
 
+  function showMessage(message) {
+    return `
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+          <div>${message}</div>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+          ></button>
+        </div>
+          `;
+  }
+
   if (!getLoggedIn()) {
     document
       .querySelector("#signupForm")
@@ -83,13 +97,17 @@ async function application() {
       let { email, password } = event.target;
       const data = await api.login(email.value, password.value);
       if (!data.ok) {
-        document.getElementById("ishMessenger").innerHTML = "Invalid";
+        document.getElementById("ishMessenger").innerHTML = showMessage(
+          "Ivalid Login!"
+        );
       } else {
         let { accessToken } = data;
         setAccessToken(accessToken);
         setLoggedIn(true);
         setUserId(data.userId);
-        document.getElementById("ishMessenger").innerHTML = "Success!";
+        document.getElementById("ishMessenger").innerHTML = showMessage(
+          "Login Successful!"
+        );
         document.querySelector("#signupForm").textContent = "";
         document.querySelector("#loginArea").textContent = "";
         populateSideBar();
@@ -137,7 +155,9 @@ async function application() {
       showButtons();
       populateSideBar();
     } else {
-      document.getElementById("ishMessenger").innerHTML = "Invalid";
+      document.getElementById("ishMessenger").innerHTML = showMessage(
+        "Invalid Tracking Data!"
+      );
     }
   }
 
@@ -151,10 +171,14 @@ async function application() {
     );
 
     if (data.ok) {
-      document.getElementById("ishMessenger").innerHTML = "Record Deleted";
+      document.getElementById("ishMessenger").innerHTML = showMessage(
+        "Record Deleted!"
+      );
       populateSideBar();
     } else {
-      document.getElementById("ishMessenger").innerHTML = "Record Not Deleted";
+      document.getElementById("ishMessenger").innerHTML = showMessage(
+        "Record Not Deleted"
+      );
     }
   }
 
@@ -169,10 +193,14 @@ async function application() {
       getAccessToken()
     );
     if (data.ok) {
-      document.getElementById("ishMessenger").innerHTML = "Record Saved";
+      document.getElementById("ishMessenger").innerHTML = showMessage(
+        "Record Saved!"
+      );
       populateSideBar();
     } else {
-      document.getElementById("ishMessenger").innerHTML = "Record Not Saved";
+      document.getElementById("ishMessenger").innerHTML = showMessage(
+        "Record Not Saved!"
+      );
     }
   }
 
@@ -230,7 +258,7 @@ async function application() {
     let sideBarData = ``;
     if (data.ok) {
       data.trackingNumbers.forEach((element) => {
-        sideBarData += `<div class='row'> <p1 class='trackingCode' data-tracking='{"carrier": "${element.carrier}", "trackingNumber": "${element.number}"}'>Tracking Number: ${element.number}</p1> </div>`;
+        sideBarData += `<div class='row'><div class='col-sm-6 col-md-6 col-lg-4 col-xl-auto'> <p1 class='trackingCode' data-tracking='{"carrier": "${element.carrier}", "trackingNumber": "${element.number}"}'>Tracking Number: ${element.number}</p1> </div></div>`;
       });
     }
     return sideBarData;
