@@ -188,8 +188,14 @@ const {
   showMessage,
   populateSideBar,
 } = require("./show");
-const { getAccessToken, setAccessToken, setUserId } = require("./accessToken");
+const {
+  getAccessToken,
+  setAccessToken,
+  setUserId,
+  setLoggedIn,
+} = require("./accessToken");
 const api = require("./apicalls");
+
 async function handleLogin(event) {
   event.preventDefault();
   let { email, password } = event.target;
