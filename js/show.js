@@ -1,6 +1,6 @@
 const { handleDelete, handleSave } = require("./handlershandle");
 const { getAccessToken, getUserId } = require("./accessToken");
-const api = require("./js/apicalls");
+const api = require("./apicalls");
 let cleared = true;
 
 function showData(data) {

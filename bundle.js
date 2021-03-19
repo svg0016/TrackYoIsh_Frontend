@@ -181,6 +181,8 @@ module.exports = {
 };
 
 },{"axios":5}],3:[function(require,module,exports){
+const { showData, showButtons, showMap, showMessage } = require("./show");
+const api = require("./apicalls");
 async function handleLogin(event) {
   event.preventDefault();
   let { email, password } = event.target;
@@ -298,8 +300,10 @@ module.exports = {
   handleTrackingNumber,
 };
 
-},{}],4:[function(require,module,exports){
+},{"./apicalls":2,"./show":4}],4:[function(require,module,exports){
 const { handleDelete, handleSave } = require("./handlershandle");
+const { getAccessToken, getUserId } = require("./accessToken");
+const api = require("./apicalls");
 let cleared = true;
 
 function showData(data) {
@@ -445,9 +449,25 @@ function clearDivs() {
   showButtons();
 }
 
-module.exports = { showData, showButtons, showMap, showSideBar, showMessage };
+async function populateSideBar() {
+  let allData = await api.getSavedTrackingData(getUserId(), getAccessToken());
+  document.querySelector("#savedTracking").innerHTML = showSideBar(allData);
+  let trackingCodes = document.querySelectorAll(".trackingCode");
+  trackingCodes.forEach((element) => {
+    element.addEventListener("click", (event) => handleTrackingNumber(event));
+  });
+}
 
-},{"./handlershandle":3}],5:[function(require,module,exports){
+module.exports = {
+  showData,
+  showButtons,
+  showMap,
+  showSideBar,
+  showMessage,
+  populateSideBar,
+};
+
+},{"./accessToken":1,"./apicalls":2,"./handlershandle":3}],5:[function(require,module,exports){
 module.exports = require('./lib/axios');
 },{"./lib/axios":7}],6:[function(require,module,exports){
 'use strict';
@@ -2041,23 +2061,15 @@ module.exports = {
 
 },{"./helpers/bind":21}],32:[function(require,module,exports){
 const api = require("./js/apicalls");
-const {
-  setAccessToken,
-  getAccessToken,
-  refreshAccessToken,
-  setLoggedIn,
-  getLoggedIn,
-  getUserId,
-  setUserId,
-} = require("./js/accessToken");
+const { refreshAccessToken, getLoggedIn } = require("./js/accessToken");
+
+const { showButtons, populateSideBar } = require("./js/show");
 
 const {
-  showData,
-  showButtons,
-  showMap,
-  showSideBar,
-  showMessage,
-} = require("./js/show");
+  handleLogin,
+  handleSignup,
+  handleTrackingNumber,
+} = require("./js/handlershandle");
 
 async function load() {
   await refreshAccessToken();
@@ -2071,15 +2083,6 @@ async function application() {
     document.querySelector("#signupForm").textContent = "";
     document.querySelector("#loginArea").textContent = "";
     populateSideBar();
-  }
-
-  async function populateSideBar() {
-    let allData = await api.getSavedTrackingData(getUserId(), getAccessToken());
-    document.querySelector("#savedTracking").innerHTML = showSideBar(allData);
-    let trackingCodes = document.querySelectorAll(".trackingCode");
-    trackingCodes.forEach((element) => {
-      element.addEventListener("click", (event) => handleTrackingNumber(event));
-    });
   }
 
   if (!getLoggedIn()) {
@@ -2103,7 +2106,7 @@ async function application() {
 
 application();
 
-},{"./js/accessToken":1,"./js/apicalls":2,"./js/show":4}],33:[function(require,module,exports){
+},{"./js/accessToken":1,"./js/apicalls":2,"./js/handlershandle":3,"./js/show":4}],33:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
